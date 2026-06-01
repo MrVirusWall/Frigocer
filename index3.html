@@ -350,45 +350,18 @@ function parseCortesDetalle(rows){
   if(rows.length<2) return [];
   var h=hdr(rows);
   console.log('Venta_Detalles cols:',h.slice(0,10).join(', '));
-  // Columnas reales: ID_Recibo_Detalle, ID_Venta, Nombre_Producto_Recibo, Kilos_Recibo, Cantidad_Recibo, Subtotal_Recibo
-  // Fecha viene del join con Ventas via ID_Venta - si no esta, usamos col Fecha si existe
-  var iNombre=col(h,['Nombre_Producto_Recibo','Nombre_Producto','ID_Producto']);
-  var iFecha=col(h,['Fecha_Venta','Fecha_Recibo','Fecha']);
+  var iID=col(h,['ID_Producto','Nombre_Producto']);
+  var iFecha=col(h,['Fecha_Venta','Fecha']);
   var iKilos=col(h,['Kilos_Recibo','Kilos','Kilo']);
   var iSub=col(h,['Subtotal_Recibo','Subtotal']);
   return rows.slice(1).map(function(r){
-    var nombre=r[iNombre]?r[iNombre].replace(/"/g,'').trim():'';
-    if(!nombre) return null;
-    // Determinar tipo por nombre del corte (empieza con letra o contiene palabras clave)
+    var raw=r[iID]?r[iID].replace(/"/g,'').trim():'';
+    var nombre=catalogo[raw]||raw;
     var tipo='O';
-    var nom=nombre.toUpperCase();
-    // Engorde tiene cortes caracteristicos
-    var engorde=['LOMO PULIDO','MATAMBRE','COSTILLA PARRILLERA','COSTILLA SC','COSTILLA C/CUERO','CARRE S/C','CUELLO C/C','CUERO DE PRIMERA','BONDIOLA','PALETA CON HUESO','PALETA DESHUESADA','PIERNA CON HUESO','PIERNA DESHUESADA'];
-    var marrana=['MAGRA','PANCETA 23','CARRE_M','CUELLO_M','COSTILLA_M','ROSTRO_M','CUERO_M','UBRE'];
-    var esEngorde=engorde.some(function(k){return nom.indexOf(k)>=0;});
-    var esMarrana=marrana.some(function(k){return nom.indexOf(k)>=0;});
-    if(esEngorde) tipo='E';
-    else if(esMarrana) tipo='M';
-    // Si el nombre viene del catalogo cruzado (ej: SKU M1, E3) detectar por catalogo
-    if(tipo==='O'){
-      for(var sku in catalogo){
-        if(catalogo[sku]===nombre){
-          if(sku.startsWith('M')) tipo='M';
-          else if(sku.startsWith('E')) tipo='E';
-          break;
-        }
-      }
-    }
-    var fechaVal=iFecha>=0?pDate(r[iFecha]):null;
-    return{
-      fecha: fechaVal,
-      date:  fechaVal||new Date(),
-      nombre: nombre,
-      tipo:   tipo,
-      kilos:  iKilos>=0?pNum(r[iKilos]):0,
-      subtotal: iSub>=0?pNum(r[iSub]):0
-    };
-  }).filter(function(r){return r&&(r.kilos>0||r.subtotal>0);});
+    if(/^M\d/.test(raw)) tipo='M';
+    else if(/^E\d/.test(raw)) tipo='E';
+    return{fecha:iFecha>=0?pDate(r[iFecha]):null,date:iFecha>=0?pDate(r[iFecha]):null,idProd:raw,nombre:nombre,tipo:tipo,kilos:iKilos>=0?pNum(r[iKilos]):0,subtotal:iSub>=0?pNum(r[iSub]):0};
+  }).filter(function(r){return r.kilos>0||r.subtotal>0;});
 }
 
 function populateSelect(selM,selA,data){
@@ -402,16 +375,6 @@ function populateSelect(selM,selA,data){
   if(years.indexOf(now.getFullYear())>=0) selA.value=now.getFullYear();
   selM.value=now.getMonth();
 }
-function filterRecentOnly(data){
-  // Keep only Abril (mes 3) y Mayo (mes 4) 2026 para alivianar carga inicial
-  // Si no hay datos en ese rango, muestra todo lo disponible
-  var filtered=data.filter(function(r){
-    if(!r.date) return false;
-    var y=r.date.getFullYear(); var m=r.date.getMonth();
-    return y===2026 && (m===3||m===4); // Abril=3, Mayo=4
-  });
-  return filtered.length>0 ? filtered : data;
-}
 function populateAllFilters(){
   populateSelect(document.getElementById('c-mes'),document.getElementById('c-anio'),DB.compras);
   populateSelect(document.getElementById('g-mes'),document.getElementById('g-anio'),DB.guias.map(function(r){return{date:r.fechaCarga||r.fechaEmision};}));
@@ -419,13 +382,6 @@ function populateAllFilters(){
   populateSelect(document.getElementById('d-mes'),document.getElementById('d-anio'),DB.desposte);
   populateSelect(document.getElementById('v-mes'),document.getElementById('v-anio'),DB.ventas);
   populateSelect(document.getElementById('vd-mes'),document.getElementById('vd-anio'),DB.cortes);
-  // Pre-seleccionar Mayo 2026 en todos los selectores
-  ['c','g','i','d','v','vd'].forEach(function(p){
-    var sm=document.getElementById(p+'-mes');
-    var sa=document.getElementById(p+'-anio');
-    if(sa) sa.value='2026';
-    if(sm) sm.value='4'; // Mayo = indice 4
-  });
   renderCompras();renderGuias();renderIngresos();renderDesposte();renderVentas();renderCortes();
 }
 function filterByPeriod(data,mesId,anioId){
