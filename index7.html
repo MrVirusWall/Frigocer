@@ -95,10 +95,14 @@ table.cortes tr:hover td{background:#fafafa;}
       <div class="topbar-divider"></div>
       <div><div class="topbar-username" id="dash-username"></div><div class="topbar-role" id="dash-role"></div></div>
     </div>
-    <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-logout" onclick="toggleDebug()" style="font-size:11px;">Debug</button>
+      <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
+    </div>
   </div>
   <div class="dash-body">
     <div class="err-banner" id="err-banner"></div>
+    <div id="debug-panel" style="display:none;background:#f0f7ff;border:1px solid #b3d4f5;border-radius:8px;padding:12px 16px;font-size:12px;font-family:monospace;line-height:1.7;margin-bottom:1rem;color:#1a3a5c;white-space:pre-wrap;word-break:break-all;"></div>
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('compras',this)"><i class="ti ti-shopping-cart"></i>Compras</button>
       <button class="tab-btn" onclick="switchTab('guias',this)"><i class="ti ti-file-text"></i>Guias</button>
@@ -155,14 +159,6 @@ table.cortes tr:hover td{background:#fafafa;}
 
 <script>
 var CATALOGO={'M1':{n:'MAGRA',t:'M'},'M2':{n:'CARNE',t:'M'},'M3':{n:'TOCINO',t:'M'},'M4':{n:'TOCINO DE LOMO',t:'M'},'M5':{n:'EMPELLA',t:'M'},'M6':{n:'LENGUA',t:'M'},'M7':{n:'CORAZON',t:'M'},'M8':{n:'PANCETA',t:'M'},'M10':{n:'CABEZA',t:'M'},'M11':{n:'COLA PULIDA',t:'M'},'M12':{n:'UBRE',t:'M'},'M14':{n:'CUERO M',t:'M'},'M15':{n:'HUESOS',t:'M'},'M16':{n:'DESP. CARNE',t:'M'},'M17':{n:'DESP. CUERO',t:'M'},'M18':{n:'DESP. RINON',t:'M'},'E1':{n:'MAGRA',t:'E'},'E2':{n:'CARNE',t:'E'},'E3':{n:'TOCINO',t:'E'},'E4':{n:'TOCINO DE LOMO',t:'E'},'E5':{n:'EMPELLA',t:'E'},'E6':{n:'LENGUA',t:'E'},'E7':{n:'CUERO DE PRIMERA',t:'E'},'E8':{n:'CUERO',t:'E'},'E9':{n:'RECORTE DE CUERO',t:'E'},'E10':{n:'ROSTRO',t:'E'},'E11':{n:'CUELLO C/C',t:'E'},'E12':{n:'CARRE S/C',t:'E'},'E13':{n:'COSTILLA C/CUERO',t:'E'},'E14':{n:'COSTILLA C/CUERO/EMP',t:'E'},'E15':{n:'COSTILLA SC/SM',t:'E'},'E16':{n:'COSTILLA SC/CM',t:'E'},'E17':{n:'COSTILLA PARRILLERA',t:'E'},'E18':{n:'PANCETA',t:'E'},'E19':{n:'LOMO PULIDO',t:'E'},'E20':{n:'MATAMBRE',t:'E'},'E21':{n:'CABEZA',t:'E'},'E22':{n:'PALETA CON HUESO',t:'E'},'E23':{n:'PALETA DESHUESADA',t:'E'},'E24':{n:'PIERNA CON HUESO',t:'E'},'E25':{n:'PIERNA DESHUESADA',t:'E'},'E26':{n:'BONDIOLA',t:'E'},'E27':{n:'COLA',t:'E'},'E28':{n:'COLA PULIDA',t:'E'},'E29':{n:'CERDO GANCHO',t:'E'},'E30':{n:'PATAS',t:'E'},'E31':{n:'HUESOS',t:'E'},'E32':{n:'DESP. CARNE',t:'E'},'E33':{n:'DESP. CUERO',t:'E'},'E34':{n:'DESP. RINON',t:'E'},'6028cc9c':{n:'CORAZON',t:'E'},'a3a64006':{n:'ROSTRO M',t:'M'},'78be15ed':{n:'CARRE M',t:'M'},'3fcfa12b':{n:'COSTILLA M',t:'M'},'ca42a393':{n:'CUELLO M',t:'M'},'c4fcfb7j':{n:'PESO VIVO',t:'V'},'d23e2e2':{n:'PANCETA 23x5',t:'M'},'abc3457':{n:'DESP. UBRE',t:'M'},'123abcd':{n:'DESP. UBRE',t:'E'},'2345dfs':{n:'DESP. ROSTRO',t:'E'},'2345djs':{n:'DESP. ROSTRO',t:'M'},'3f7aedc8':{n:'PALETA DESHUESADA M',t:'M'},'bf5c88ba':{n:'MAGRA M ESP',t:'M'},'bf5c88j':{n:'PIERNA DESHUESADA M',t:'M'}};
-var DESPERDICIOS=['HUESOS','DESP. CARNE','DESP. CUERO','DESP. UBRE','DESP. ROSTRO','DESP. RINON','DESP. RIÑON'];
-function esDesp(nombre){
-  var n=(nombre||'').toUpperCase().trim();
-  for(var i=0;i<DESPERDICIOS.length;i++){
-    if(n===DESPERDICIOS[i]||n.indexOf(DESPERDICIOS[i])>=0) return true;
-  }
-  return false;
-}
 var USERS={Francisco:'1234',Gonzalo:'1234',Camal:'1234'};
 var SID='1xUJThhPiYD2upK89oAkYxadlsjolaLPDZp36HLpdZEE';
 var MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -173,6 +169,10 @@ var guiaSeg='emision', ventaVista='dia', corteAnimal='all';
 var errores=[];
 
 // ---- AUTH ----
+function toggleDebug(){
+  var d=document.getElementById('debug-panel');
+  d.style.display=d.style.display==='none'?'block':'none';
+}
 function doLogin(){
   var sel=document.getElementById('sel-user').value;
   var pass=document.getElementById('inp-pass').value;
@@ -283,6 +283,39 @@ async function loadAll(){
   // Join detalles con fechas de ventas
   joinDetallesFechas();
 
+  // --- DEBUG PANEL ---
+  var dbg=document.getElementById('debug-panel');
+  var lines=[];
+  lines.push('<strong>Estado de carga:</strong>');
+  lines.push('Ventas: '+DB.ventas.length+' registros | ventasFechaMap: '+Object.keys(ventasFechaMap).length+' IDs');
+  lines.push('Venta_Detalles: '+DB.detalles.length+' registros | con fecha: '+DB.detalles.filter(function(r){return r.date;}).length);
+  lines.push('Compras: '+DB.compras.length+' | Guias: '+DB.guias.length+' | Ingresos: '+DB.ingresos.length+' | Desposte: '+DB.desposte.length);
+  if(errores.length>0) lines.push('<span style="color:#c0392b">ERRORES: '+errores.join(' | ')+'</span>');
+  else lines.push('<span style="color:#1d9e75">Sin errores de carga</span>');
+  // Sample de ventas
+  if(DB.ventas.length>0){
+    var s=DB.ventas[0];
+    lines.push('Muestra Ventas[0]: id='+s.id+' fecha='+(s.date?s.date.toLocaleDateString('es-BO'):'null')+' total='+s.total);
+  }
+  // Sample de detalles
+  if(DB.detalles.length>0){
+    var d=DB.detalles[0];
+    lines.push('Muestra Detalles[0]: idVenta='+d.idVenta+' prod='+d.idProd+' nombre='+d.nombre+' kilos='+d.kilos+' sub='+d.subtotal+' fecha='+(d.date?d.date.toLocaleDateString('es-BO'):'null'));
+  }
+  // Meses disponibles en detalles
+  var mesesDet={};
+  DB.detalles.forEach(function(r){if(r.date){var k=r.date.getFullYear()+'-'+(r.date.getMonth()+1);mesesDet[k]=(mesesDet[k]||0)+1;}});
+  lines.push('Meses en Detalles: '+JSON.stringify(mesesDet));
+  if(window._detallesHeaders) lines.push('Detalles cols: '+window._detallesHeaders.slice(0,8).join(' | '));
+  if(DB.detalles.length>0) lines.push('Detalles idVenta[0]='+DB.detalles[0].idVenta+' ventaMap[ese id]='+JSON.stringify(ventasFechaMap[DB.detalles[0].idVenta]||'NO MATCH'));
+  if(window._joinResult) lines.push('Join: '+JSON.stringify(window._joinResult));
+  var mesesVen={};
+  DB.ventas.forEach(function(r){if(r.date){var k=r.date.getFullYear()+'-'+(r.date.getMonth()+1);mesesVen[k]=(mesesVen[k]||0)+1;}});
+  lines.push('Meses en Ventas: '+JSON.stringify(mesesVen));
+
+  dbg.style.display='block';
+  dbg.innerHTML=lines.join('<br>');
+  // --- FIN DEBUG ---
 
   if(errores.length>0){
     banner.style.display='block';
@@ -588,8 +621,6 @@ function renderCortes(){
   document.getElementById('vd-load').style.display='none';
   var data=filterPeriod(DB.detalles,'vd-mes','vd-anio');
   if(corteAnimal!=='all') data=data.filter(function(r){return r.tipo===corteAnimal;});
-  // Excluir desperdicios de todos los calculos y graficas
-  data=data.filter(function(r){return !esDesp(r.nombre);});
   if(!data.length){
     noData('vd-w1','vd-nodata1');noData('vd-w2',null);
     ['vd-k1','vd-k2','vd-k3','vd-k4'].forEach(function(id){document.getElementById(id).textContent='-';});
