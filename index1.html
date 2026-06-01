@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frigocer — Panel de gestión</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f2;color:#1a1a1a;min-height:100vh;}
+#login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;padding:2rem 1rem;background:#f4f4f2;}
+.logo-circle{width:64px;height:64px;border-radius:50%;background:#e24b4a;display:flex;align-items:center;justify-content:center;}
+.logo-circle i{font-size:28px;color:#fff;}
+.logo-name{font-size:24px;font-weight:600;color:#1a1a1a;letter-spacing:-.3px;}
+.logo-sub{font-size:14px;color:#666;}
+.login-card{background:#fff;border:1px solid #e0e0e0;border-radius:14px;padding:1.75rem;width:100%;max-width:360px;display:flex;flex-direction:column;gap:16px;box-shadow:0 2px 12px rgba(0,0,0,.07);}
+.login-card label{font-size:13px;color:#555;display:block;margin-bottom:5px;font-weight:500;}
+.login-card select,.login-card input{width:100%;font-size:15px;padding:9px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;transition:border .15s;}
+.login-card select:focus,.login-card input:focus{border-color:#e24b4a;}
+.err-msg{font-size:13px;color:#e24b4a;text-align:center;display:none;}
+.btn-primary{background:#e24b4a;color:#fff;border:none;border-radius:8px;padding:11px 0;font-size:15px;font-weight:600;cursor:pointer;width:100%;transition:opacity .15s;}
+.btn-primary:hover{opacity:.88;}
+
+#dashboard{display:none;min-height:100vh;background:#f4f4f2;}
+.dash-topbar{background:#fff;border-bottom:1px solid #e8e8e8;padding:.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.dash-brand{display:flex;align-items:center;gap:10px;}
+.brand-dot{width:10px;height:10px;border-radius:50%;background:#e24b4a;flex-shrink:0;}
+.brand-name{font-size:16px;font-weight:600;color:#1a1a1a;}
+.brand-user{font-size:12px;color:#888;}
+.btn-logout{font-size:12px;border:1px solid #ddd;border-radius:7px;padding:6px 12px;cursor:pointer;background:#fff;color:#666;display:flex;align-items:center;gap:5px;}
+.btn-logout:hover{background:#f4f4f2;}
+
+.dash-body{padding:1.25rem;max-width:960px;margin:0 auto;}
+
+.nav-tabs{display:flex;gap:2px;margin-bottom:1.5rem;background:#fff;border:1px solid #e8e8e8;border-radius:10px;padding:4px;overflow-x:auto;}
+.tab-btn{padding:8px 14px;font-size:13px;font-weight:500;background:transparent;border:none;cursor:pointer;color:#888;border-radius:7px;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.tab-btn:hover{color:#1a1a1a;background:#f4f4f2;}
+.tab-btn.active{color:#e24b4a;background:#fff2f2;font-weight:600;}
+.tab-btn i{font-size:14px;}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+.filter-row{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.filter-row label{font-size:13px;color:#666;white-space:nowrap;font-weight:500;}
+.filter-row select{font-size:13px;padding:6px 10px;border-radius:7px;border:1px solid #ddd;background:#fff;color:#1a1a1a;cursor:pointer;outline:none;}
+.filter-row select:focus{border-color:#e24b4a;}
+.seg-ctrl{display:flex;border:1px solid #ddd;border-radius:7px;overflow:hidden;background:#fff;}
+.seg-btn{padding:6px 12px;font-size:12px;font-weight:500;background:transparent;border:none;cursor:pointer;color:#666;transition:all .15s;}
+.seg-btn:hover{background:#f4f4f2;}
+.seg-btn.active{background:#e24b4a;color:#fff;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem;}
+.kpi{background:#fff;border:1px solid #eee;border-radius:10px;padding:14px 16px;}
+.kpi-label{font-size:11px;color:#888;margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.3px;}
+.kpi-value{font-size:22px;font-weight:600;color:#1a1a1a;}
+.kpi-unit{font-size:11px;color:#aaa;margin-top:2px;}
+.kpi.highlight{border-color:#ffd0d0;}
+.kpi.highlight .kpi-value{color:#e24b4a;}
+
+.chart-card{background:#fff;border:1px solid #eee;border-radius:12px;padding:1.25rem;margin-bottom:1rem;}
+.chart-title{font-size:13px;font-weight:600;color:#333;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.chart-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.loading-msg{font-size:13px;color:#aaa;padding:2rem 0;text-align:center;}
+.no-data{font-size:13px;color:#aaa;padding:1.5rem 0;text-align:center;display:none;}
+
+@media(max-width:480px){
+  .kpi-value{font-size:18px;}
+  .nav-tabs{border-radius:8px;}
+  .tab-btn{padding:7px 10px;font-size:12px;}
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+    <div class="logo-circle"><i class="ti ti-building-store"></i></div>
+    <div class="logo-name">Frigocer</div>
+    <div class="logo-sub">Panel de gestión</div>
+  </div>
+  <div class="login-card">
+    <div>
+      <label for="sel-user">Usuario</label>
+      <select id="sel-user">
+        <option value="">— Seleccionar —</option>
+        <option value="Francisco|gerente">Francisco (Gerente)</option>
+        <option value="Gonzalo|gerente">Gonzalo (Gerente)</option>
+        <option value="Camal|encargado">Camal (Encargado)</option>
+      </select>
+    </div>
+    <div>
+      <label for="inp-pass">Contraseña</label>
+      <input type="password" id="inp-pass" placeholder="••••" />
+    </div>
+    <div class="err-msg" id="err-login"></div>
+    <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="dash-topbar">
+    <div class="dash-brand">
+      <div class="brand-dot"></div>
+      <div>
+        <div class="brand-name">Frigocer</div>
+        <div class="brand-user" id="dash-user-label"></div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
+  </div>
+
+  <div class="dash-body">
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('compras',this)"><i class="ti ti-shopping-cart"></i>Compras</button>
+      <button class="tab-btn" onclick="switchTab('guias',this)"><i class="ti ti-file-text"></i>Guías</button>
+      <button class="tab-btn" onclick="switchTab('ingresos',this)"><i class="ti ti-meat"></i>Ingresos</button>
+      <button class="tab-btn" onclick="switchTab('desposte',this)"><i class="ti ti-tools-kitchen-2"></i>Desposte</button>
+      <button class="tab-btn" onclick="switchTab('ventas',this)"><i class="ti ti-cash"></i>Ventas</button>
+    </div>
+
+    <!-- COMPRAS -->
+    <div class="tab-content active" id="tab-compras">
+      <div class="filter-row">
+        <label>Mes:</label><select id="c-mes" onchange="renderCompras()"></select>
+        <label>Año:</label><select id="c-anio" onchange="renderCompras()"></select>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label">Registros</div><div class="kpi-value" id="c-k1">—</div></div>
+        <div class="kpi"><div class="kpi-label">Animales</div><div class="kpi-value" id="c-k2">—</div></div>
+        <div class="kpi"><div class="kpi-label">Kg comprados</div><div class="kpi-value" id="c-k3">—</div><div class="kpi-unit">kg</div></div>
+        <div class="kpi"><div class="kpi-label">Costo total</div><div class="kpi-value" id="c-k4">—</div><div class="kpi-unit">Bs.</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#e24b4a;"></span>Animales comprados por día</div>
+        <div class="loading-msg" id="c-load">Cargando datos…</div>
+        <div style="position:relative;width:100%;height:220px;display:none;" id="c-w1"><canvas id="c-ch1"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#378add;"></span>Peso total por día (kg)</div>
+        <div style="position:relative;width:100%;height:220px;" id="c-w2"><canvas id="c-ch2"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#1d9e75;"></span>Costo total por día (Bs.)</div>
+        <div style="position:relative;width:100%;height:220px;" id="c-w3"><canvas id="c-ch3"></canvas></div>
+      </div>
+    </div>
+
+    <!-- GUÍAS -->
+    <div class="tab-content" id="tab-guias">
+      <div class="filter-row">
+        <label>Ver por:</label>
+        <div class="seg-ctrl">
+          <button class="seg-btn active" id="g-seg-emision" onclick="setGuiaSeg('emision')">Fecha matanza</button>
+          <button class="seg-btn" id="g-seg-carga" onclick="setGuiaSeg('carga')">Fecha carga</button>
+        </div>
+        <label>Mes:</label><select id="g-mes" onchange="renderGuias()"></select>
+        <label>Año:</label><select id="g-anio" onchange="renderGuias()"></select>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label">Guías</div><div class="kpi-value" id="g-k1">—</div></div>
+        <div class="kpi"><div class="kpi-label">Lotes</div><div class="kpi-value" id="g-k2">—</div></div>
+        <div class="kpi"><div class="kpi-label">Kg total guías</div><div class="kpi-value" id="g-k3">—</div><div class="kpi-unit">kg</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#ba7517;"></span>Kg en guías por día — por lote</div>
+        <div class="loading-msg" id="g-load">Cargando datos…</div>
+        <div style="position:relative;width:100%;height:260px;display:none;" id="g-w1"><canvas id="g-ch1"></canvas></div>
+        <div class="no-data" id="g-nodata">Sin datos para el período seleccionado</div>
+      </div>
+    </div>
+
+    <!-- INGRESOS -->
+    <div class="tab-content" id="tab-ingresos">
+      <div class="filter-row">
+        <label>Mes:</label><select id="i-mes" onchange="renderIngresos()"></select>
+        <label>Año:</label><select id="i-anio" onchange="renderIngresos()"></select>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label">Animales recibidos</div><div class="kpi-value" id="i-k1">—</div></div>
+        <div class="kpi"><div class="kpi-label">Lotes</div><div class="kpi-value" id="i-k2">—</div></div>
+        <div class="kpi"><div class="kpi-label">Kg gancho total</div><div class="kpi-value" id="i-k3">—</div><div class="kpi-unit">kg</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#534ab7;"></span>Kg gancho recibido por día</div>
+        <div class="loading-msg" id="i-load">Cargando datos…</div>
+        <div style="position:relative;width:100%;height:220px;display:none;" id="i-w1"><canvas id="i-ch1"></canvas></div>
+        <div class="no-data" id="i-nodata">Sin datos para el período seleccionado</div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#afa9ec;"></span>Animales recibidos por día (cabezas)</div>
+        <div style="position:relative;width:100%;height:200px;" id="i-w2"><canvas id="i-ch2"></canvas></div>
+      </div>
+    </div>
+
+    <!-- DESPOSTE -->
+    <div class="tab-content" id="tab-desposte">
+      <div class="filter-row">
+        <label>Mes:</label><select id="d-mes" onchange="renderDesposte()"></select>
+        <label>Año:</label><select id="d-anio" onchange="renderDesposte()"></select>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label">Registros</div><div class="kpi-value" id="d-k1">—</div></div>
+        <div class="kpi"><div class="kpi-label">Lotes</div><div class="kpi-value" id="d-k2">—</div></div>
+        <div class="kpi"><div class="kpi-label">Kg obtenidos</div><div class="kpi-value" id="d-k3">—</div><div class="kpi-unit">kg</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#0f6e56;"></span>Kg despostados por día — por tipo de animal</div>
+        <div class="loading-msg" id="d-load">Cargando datos…</div>
+        <div style="position:relative;width:100%;height:260px;display:none;" id="d-w1"><canvas id="d-ch1"></canvas></div>
+        <div class="no-data" id="d-nodata">Sin datos para el período seleccionado</div>
+      </div>
+    </div>
+
+    <!-- VENTAS -->
+    <div class="tab-content" id="tab-ventas">
+      <div class="filter-row">
+        <label>Vista:</label>
+        <div class="seg-ctrl">
+          <button class="seg-btn active" id="v-seg-dia" onclick="setVentaVista('dia')">Diaria</button>
+          <button class="seg-btn" id="v-seg-mes" onclick="setVentaVista('mes')">Mensual</button>
+        </div>
+        <label id="v-lbl-mes">Mes:</label>
+        <select id="v-mes" onchange="renderVentas()"></select>
+        <label>Año:</label><select id="v-anio" onchange="renderVentas()"></select>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi highlight"><div class="kpi-label">Total vendido</div><div class="kpi-value" id="v-k1">—</div><div class="kpi-unit">Bs.</div></div>
+        <div class="kpi"><div class="kpi-label">Transacciones</div><div class="kpi-value" id="v-k2">—</div></div>
+        <div class="kpi"><div class="kpi-label">Promedio por venta</div><div class="kpi-value" id="v-k3">—</div><div class="kpi-unit">Bs.</div></div>
+        <div class="kpi"><div class="kpi-label">Mejor día / mes</div><div class="kpi-value" id="v-k4">—</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="chart-dot" style="background:#e24b4a;"></span><span id="v-chart-title">Total ventas por día (Bs.)</span></div>
+        <div class="loading-msg" id="v-load">Cargando datos…</div>
+        <div style="position:relative;width:100%;height:260px;display:none;" id="v-w1"><canvas id="v-ch1"></canvas></div>
+        <div class="no-data" id="v-nodata">Sin datos para el período seleccionado</div>
+      </div>
+      <div class="chart-card" id="v-card2">
+        <div class="chart-title"><span class="chart-dot" style="background:#378add;"></span>Cantidad de transacciones por día</div>
+        <div style="position:relative;width:100%;height:200px;" id="v-w2"><canvas id="v-ch2"></canvas></div>
+      </div>
+    </div>
+
+  </div><!-- /dash-body -->
+</div><!-- /dashboard -->
+
+<script>
+const USERS = { Francisco: '1234', Gonzalo: '1234', Camal: '1234' };
+const SID = '1xUJThhPiYD2upK89oAkYxadlsjolaLPDZp36HLpdZEE';
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+let DB = { compras:[], guias:[], ingresos:[], desposte:[], ventas:[] };
+let charts = {};
+let guiaSeg = 'emision';
+let ventaVista = 'dia';
+
+function doLogin() {
+  const sel = document.getElementById('sel-user').value;
+  const pass = document.getElementById('inp-pass').value;
+  const err = document.getElementById('err-login');
+  if (!sel) { err.style.display = 'block'; err.textContent = 'Seleccioná un usuario'; return; }
+  const [name] = sel.split('|');
+  if (pass !== USERS[name]) { err.style.display = 'block'; err.textContent = 'Contraseña incorrecta'; return; }
+  err.style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('dash-user-label').textContent = name + ' · ' + (sel.includes('gerente') ? 'Gerente' : 'Encargado');
+  if (!DB.compras.length) loadAll();
+}
+
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('inp-pass').value = '';
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setGuiaSeg(v) {
+  guiaSeg = v;
+  document.getElementById('g-seg-emision').classList.toggle('active', v === 'emision');
+  document.getElementById('g-seg-carga').classList.toggle('active', v === 'carga');
+  renderGuias();
+}
+
+function setVentaVista(v) {
+  ventaVista = v;
+  document.getElementById('v-seg-dia').classList.toggle('active', v === 'dia');
+  document.getElementById('v-seg-mes').classList.toggle('active', v === 'mes');
+  document.getElementById('v-lbl-mes').style.display = v === 'dia' ? '' : 'none';
+  document.getElementById('v-mes').style.display = v === 'dia' ? '' : 'none';
+  document.getElementById('v-card2').style.display = v === 'dia' ? 'block' : 'none';
+  document.getElementById('v-chart-title').textContent = v === 'dia' ? 'Total ventas por día (Bs.)' : 'Total ventas por mes (Bs.)';
+  renderVentas();
+}
+
+function parseCSV(txt) {
+  const rows = [];
+  for (const line of txt.split('\n')) {
+    if (!line.trim()) continue;
+    const cols = []; let cur = '', inQ = false;
+    for (const c of line) {
+      if (c === '"') inQ = !inQ;
+      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else cur += c;
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+
+function pDate(s) {
+  if (!s) return null;
+  const clean = s.replace(/"/g, '').trim();
+  const p = clean.split('/');
+  if (p.length === 3) {
+    const d = new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const iso = new Date(clean.split(' ')[0]);
+  return isNaN(iso.getTime()) ? null : iso;
+}
+
+function pNum(v) {
+  if (!v && v !== 0) return 0;
+  return parseFloat(String(v).replace(/"/g,'').replace(/\./g,'').replace(',','.')) || 0;
+}
+
+function fmtDate(d) { return d.toLocaleDateString('es-BO', { day: '2-digit', month: '2-digit' }); }
+function fmtN(n) { return Math.round(n).toLocaleString('es-BO'); }
+
+function sortLabels(labels) {
+  return labels.sort((a, b) => {
+    const [da, ma] = a.split('/'); const [db, mb] = b.split('/');
+    return new Date(2025, parseInt(ma)-1, parseInt(da)) - new Date(2025, parseInt(mb)-1, parseInt(db));
+  });
+}
+
+async function loadAll() {
+  const sheets = [
+    { key: 'compras',  sheet: 'Compras',              parse: parseCompras  },
+    { key: 'guias',    sheet: 'Guias_N8N',             parse: parseGuias    },
+    { key: 'ingresos', sheet: 'Ingresos',              parse: parseIngresos },
+    { key: 'desposte', sheet: 'Inventario_Desposte',   parse: parseDesposte },
+    { key: 'ventas',   sheet: 'Ventas',                parse: parseVentas   }
+  ];
+  for (const s of sheets) {
+    try {
+      const url = `https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(s.sheet)}`;
+      const res = await fetch(url);
+      const txt = await res.text();
+      DB[s.key] = s.parse(parseCSV(txt));
+    } catch(e) { console.warn(s.key, e); }
+  }
+  populateAllFilters();
+}
+
+function parseCompras(rows) {
+  if (rows.length < 2) return [];
+  const h = rows[0].map(x => x.replace(/"/g,''));
+  const iD = h.findIndex(x => x.includes('Fecha'));
+  const iA = h.findIndex(x => x.includes('Cantidad_Animales'));
+  const iP = h.findIndex(x => x.includes('Peso_Total'));
+  const iC = h.findIndex(x => x.includes('Costo_Final'));
+  return rows.slice(1).map(r => ({ date: pDate(r[iD]), anim: pNum(r[iA]), peso: pNum(r[iP]), costo: pNum(r[iC]) })).filter(r => r.date);
+}
+
+function parseGuias(rows) {
+  if (rows.length < 2) return [];
+  const h = rows[0].map(x => x.replace(/"/g,''));
+  const iCarga   = h.findIndex(x => x.includes('Fecha_Carga'));
+  const iLote    = h.findIndex(x => x.includes('ID_Lote'));
+  const iEmision = h.findIndex(x => x.includes('Emision'));
+  const iPeso    = h.findIndex(x => x.toLowerCase().includes('peso_guia') || x.toLowerCase().includes('peso'));
+  return rows.slice(1).map(r => ({
+    fechaCarga:   pDate(r[iCarga]),
+    fechaEmision: pDate(r[iEmision]),
+    lote: r[iLote] ? r[iLote].replace(/"/g,'').trim() : '?',
+    peso: pNum(r[iPeso])
+  })).filter(r => r.fechaCarga || r.fechaEmision);
+}
+
+function parseIngresos(rows) {
+  if (rows.length < 2) return [];
+  const h = rows[0].map(x => x.replace(/"/g,''));
+  const iLote  = h.findIndex(x => x.includes('ID_Lote'));
+  const iFecha = h.findIndex(x => x.includes('Fecha_Ingreso'));
+  const iPeso  = h.findIndex(x => x.includes('Peso_Gancho') || x.includes('Gancho'));
+  return rows.slice(1).map(r => ({
+    lote: r[iLote] ? r[iLote].replace(/"/g,'').trim() : '?',
+    date: pDate(r[iFecha]),
+    peso: pNum(r[iPeso])
+  })).filter(r => r.date && r.peso > 0);
+}
+
+function parseDesposte(rows) {
+  if (rows.length < 2) return [];
+  const h = rows[0].map(x => x.replace(/"/g,''));
+  const iLote  = h.findIndex(x => x.includes('ID_Lote'));
+  const iFecha = h.findIndex(x => x.includes('Fecha_Desposte'));
+  const iKg    = h.findIndex(x => x.includes('Kilos_Obtenidos'));
+  const iTipo  = h.findIndex(x => x.includes('Tipo_Animal'));
+  return rows.slice(1).map(r => ({
+    lote: r[iLote] ? r[iLote].replace(/"/g,'').trim() : '?',
+    date: pDate(r[iFecha]),
+    kg:   pNum(r[iKg]),
+    tipo: r[iTipo] ? r[iTipo].replace(/"/g,'').trim() : 'Otro'
+  })).filter(r => r.date && r.kg > 0);
+}
+
+function parseVentas(rows) {
+  if (rows.length < 2) return [];
+  const h = rows[0].map(x => x.replace(/"/g,'').trim());
+  const iFecha = h.findIndex(x => x.includes('Fecha_Venta'));
+  const iTotal = h.findIndex(x => x.includes('Total_Venta'));
+  if (iFecha < 0 || iTotal < 0) { console.warn('Ventas: columnas no encontradas', h); return []; }
+  return rows.slice(1).map(r => ({ date: pDate(r[iFecha]), total: pNum(r[iTotal]) })).filter(r => r.date && r.total > 0);
+}
+
+function populateSelect(selM, selA, data) {
+  const years = [...new Set(data.map(r => r.date ? r.date.getFullYear() : null).filter(Boolean))].sort((a,b) => b-a);
+  if (!years.length) years.push(new Date().getFullYear());
+  selA.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+  selM.innerHTML = '<option value="all">Todos</option>' + MESES.map((m,i) => `<option value="${i}">${m}</option>`).join('');
+  const now = new Date();
+  if (years.includes(now.getFullYear())) selA.value = now.getFullYear();
+  selM.value = now.getMonth();
+}
+
+function populateAllFilters() {
+  populateSelect(document.getElementById('c-mes'), document.getElementById('c-anio'), DB.compras);
+  const gData = DB.guias.map(r => ({ date: r.fechaCarga || r.fechaEmision }));
+  populateSelect(document.getElementById('g-mes'), document.getElementById('g-anio'), gData);
+  populateSelect(document.getElementById('i-mes'), document.getElementById('i-anio'), DB.ingresos);
+  populateSelect(document.getElementById('d-mes'), document.getElementById('d-anio'), DB.desposte);
+  populateSelect(document.getElementById('v-mes'), document.getElementById('v-anio'), DB.ventas);
+  renderCompras(); renderGuias(); renderIngresos(); renderDesposte(); renderVentas();
+}
+
+function filterByPeriod(data, mesId, anioId) {
+  const yr  = parseInt(document.getElementById(anioId).value);
+  const mon = document.getElementById(mesId).value;
+  return data.filter(r => {
+    if (!r.date) return false;
+    if (r.date.getFullYear() !== yr) return false;
+    if (mon !== 'all' && r.date.getMonth() !== parseInt(mon)) return false;
+    return true;
+  });
+}
+
+function baseOpts() {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#888', font: { size: 10 }, autoSkip: true, maxRotation: 45 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { ticks: { color: '#888', font: { size: 10 }, callback: v => v.toLocaleString('es-BO') }, grid: { color: 'rgba(0,0,0,0.05)' } }
+    }
+  };
+}
+
+function mkChart(id, labels, data, color, type='bar') {
+  if (charts[id]) charts[id].destroy();
+  const ds = { data, backgroundColor: color, borderRadius: 3, borderColor: color };
+  if (type === 'line') { ds.fill = false; ds.tension = .3; ds.pointRadius = 3; ds.pointBackgroundColor = color; }
+  charts[id] = new Chart(document.getElementById(id), { type, data: { labels, datasets: [ds] }, options: baseOpts() });
+}
+
+function renderCompras() {
+  const data = filterByPeriod(DB.compras, 'c-mes', 'c-anio');
+  document.getElementById('c-load').style.display = 'none';
+  document.getElementById('c-w1').style.display = 'block';
+  const byDay = {};
+  data.forEach(r => { const k = fmtDate(r.date); if (!byDay[k]) byDay[k] = {anim:0,peso:0,costo:0}; byDay[k].anim+=r.anim; byDay[k].peso+=r.peso; byDay[k].costo+=r.costo; });
+  const labels = sortLabels(Object.keys(byDay));
+  const tot = data.reduce((a,r) => ({anim:a.anim+r.anim,peso:a.peso+r.peso,costo:a.costo+r.costo}), {anim:0,peso:0,costo:0});
+  document.getElementById('c-k1').textContent = data.length;
+  document.getElementById('c-k2').textContent = fmtN(tot.anim);
+  document.getElementById('c-k3').textContent = fmtN(tot.peso);
+  document.getElementById('c-k4').textContent = fmtN(tot.costo);
+  mkChart('c-ch1', labels, labels.map(l => byDay[l].anim), '#e24b4a');
+  mkChart('c-ch2', labels, labels.map(l => Math.round(byDay[l].peso)), '#378add');
+  mkChart('c-ch3', labels, labels.map(l => Math.round(byDay[l].costo)), '#1d9e75');
+}
+
+function renderGuias() {
+  const yr  = parseInt(document.getElementById('g-anio').value);
+  const mon = document.getElementById('g-mes').value;
+  const data = DB.guias.filter(r => {
+    const d = guiaSeg === 'emision' ? r.fechaEmision : r.fechaCarga;
+    if (!d) return false;
+    if (d.getFullYear() !== yr) return false;
+    if (mon !== 'all' && d.getMonth() !== parseInt(mon)) return false;
+    return true;
+  });
+  document.getElementById('g-load').style.display = 'none';
+  const nd = document.getElementById('g-nodata'), wrap = document.getElementById('g-w1');
+  if (!data.length) {
+    nd.style.display = 'block'; wrap.style.display = 'none';
+    ['g-k1','g-k2','g-k3'].forEach(id => document.getElementById(id).textContent = '0'); return;
+  }
+  nd.style.display = 'none'; wrap.style.display = 'block';
+  const lotes = [...new Set(data.map(r => r.lote))].sort((a,b) => parseInt(a)-parseInt(b));
+  const days  = [...new Set(data.map(r => fmtDate(guiaSeg === 'emision' ? r.fechaEmision : r.fechaCarga)))];
+  const labels = sortLabels(days);
+  const colors = ['#ba7517','#e24b4a','#378add','#1d9e75','#534ab7','#0f6e56','#993556'];
+  const datasets = lotes.slice(0,7).map((lote,i) => {
+    const byDay = {};
+    data.filter(r => r.lote === lote).forEach(r => { const d = guiaSeg==='emision'?r.fechaEmision:r.fechaCarga; const k=fmtDate(d); if(!byDay[k])byDay[k]=0; byDay[k]+=r.peso; });
+    return { label: 'Lote '+lote, data: labels.map(l => Math.round(byDay[l]||0)), backgroundColor: colors[i%colors.length], borderRadius: 2, stack: 's' };
+  });
+  const totKg = data.reduce((a,r) => a+r.peso, 0);
+  document.getElementById('g-k1').textContent = data.length;
+  document.getElementById('g-k2').textContent = lotes.length;
+  document.getElementById('g-k3').textContent = fmtN(totKg);
+  if (charts['g-ch1']) charts['g-ch1'].destroy();
+  charts['g-ch1'] = new Chart(document.getElementById('g-ch1'), {
+    type: 'bar', data: { labels, datasets },
+    options: { ...baseOpts(), plugins: { legend: { display: lotes.length > 1, position: 'top', labels: { font:{size:10}, boxWidth:8, padding:6 } } },
+      scales: { ...baseOpts().scales, x: { ...baseOpts().scales.x, stacked:true }, y: { ...baseOpts().scales.y, stacked:true } } }
+  });
+}
+
+function renderIngresos() {
+  const data = filterByPeriod(DB.ingresos, 'i-mes', 'i-anio');
+  document.getElementById('i-load').style.display = 'none';
+  const nd = document.getElementById('i-nodata'), w1 = document.getElementById('i-w1');
+  if (!data.length) {
+    nd.style.display = 'block'; w1.style.display = 'none';
+    ['i-k1','i-k2','i-k3'].forEach(id => document.getElementById(id).textContent = '0'); return;
+  }
+  nd.style.display = 'none'; w1.style.display = 'block';
+  const byDay = {};
+  data.forEach(r => { const k = fmtDate(r.date); if (!byDay[k]) byDay[k]={peso:0,cnt:0}; byDay[k].peso+=r.peso; byDay[k].cnt++; });
+  const labels = sortLabels(Object.keys(byDay));
+  const tot = data.reduce((a,r) => ({peso:a.peso+r.peso,cnt:a.cnt+1}), {peso:0,cnt:0});
+  document.getElementById('i-k1').textContent = tot.cnt;
+  document.getElementById('i-k2').textContent = [...new Set(data.map(r => r.lote))].length;
+  document.getElementById('i-k3').textContent = fmtN(tot.peso);
+  mkChart('i-ch1', labels, labels.map(l => Math.round(byDay[l].peso)), '#534ab7');
+  mkChart('i-ch2', labels, labels.map(l => byDay[l].cnt), '#afa9ec');
+}
+
+function renderDesposte() {
+  const data = filterByPeriod(DB.desposte, 'd-mes', 'd-anio');
+  document.getElementById('d-load').style.display = 'none';
+  const nd = document.getElementById('d-nodata'), wrap = document.getElementById('d-w1');
+  if (!data.length) {
+    nd.style.display = 'block'; wrap.style.display = 'none';
+    ['d-k1','d-k2','d-k3'].forEach(id => document.getElementById(id).textContent = '0'); return;
+  }
+  nd.style.display = 'none'; wrap.style.display = 'block';
+  const tipos = [...new Set(data.map(r => r.tipo))].sort();
+  const days  = [...new Set(data.map(r => fmtDate(r.date)))];
+  const labels = sortLabels(days);
+  const clrs = { Marrana:'#e24b4a', Engorde:'#378add', Verraco:'#ba7517', Otro:'#888780' };
+  const datasets = tipos.map(tipo => {
+    const byDay = {};
+    data.filter(r => r.tipo === tipo).forEach(r => { const k=fmtDate(r.date); if(!byDay[k])byDay[k]=0; byDay[k]+=r.kg; });
+    return { label: tipo, data: labels.map(l => Math.round(byDay[l]||0)), backgroundColor: clrs[tipo]||'#1d9e75', borderRadius: 2, stack: 's' };
+  });
+  const tot = data.reduce((a,r) => a+r.kg, 0);
+  document.getElementById('d-k1').textContent = data.length;
+  document.getElementById('d-k2').textContent = [...new Set(data.map(r => r.lote))].length;
+  document.getElementById('d-k3').textContent = fmtN(tot);
+  if (charts['d-ch1']) charts['d-ch1'].destroy();
+  charts['d-ch1'] = new Chart(document.getElementById('d-ch1'), {
+    type: 'bar', data: { labels, datasets },
+    options: { ...baseOpts(), plugins: { legend: { display: tipos.length > 1, position: 'top', labels: { font:{size:10}, boxWidth:8, padding:6 } } },
+      scales: { ...baseOpts().scales, x: { ...baseOpts().scales.x, stacked:true }, y: { ...baseOpts().scales.y, stacked:true } } }
+  });
+}
+
+function renderVentas() {
+  document.getElementById('v-load').style.display = 'none';
+  const nd = document.getElementById('v-nodata'), w1 = document.getElementById('v-w1');
+
+  if (ventaVista === 'dia') {
+    const data = filterByPeriod(DB.ventas, 'v-mes', 'v-anio');
+    if (!data.length) {
+      nd.style.display = 'block'; w1.style.display = 'none';
+      ['v-k1','v-k2','v-k3','v-k4'].forEach(id => document.getElementById(id).textContent = '—'); return;
+    }
+    nd.style.display = 'none'; w1.style.display = 'block';
+    const byDay = {};
+    data.forEach(r => { const k=fmtDate(r.date); if(!byDay[k])byDay[k]={total:0,cnt:0}; byDay[k].total+=r.total; byDay[k].cnt++; });
+    const labels  = sortLabels(Object.keys(byDay));
+    const totals  = labels.map(l => Math.round(byDay[l].total));
+    const cnts    = labels.map(l => byDay[l].cnt);
+    const grandTotal = data.reduce((a,r) => a+r.total, 0);
+    const maxIdx = totals.indexOf(Math.max(...totals));
+    document.getElementById('v-k1').textContent = fmtN(grandTotal);
+    document.getElementById('v-k2').textContent = data.length;
+    document.getElementById('v-k3').textContent = data.length ? fmtN(grandTotal / data.length) : '—';
+    document.getElementById('v-k4').textContent = maxIdx >= 0 ? labels[maxIdx] : '—';
+    mkChart('v-ch1', labels, totals, '#e24b4a');
+    mkChart('v-ch2', labels, cnts,   '#378add');
+  } else {
+    const yr   = parseInt(document.getElementById('v-anio').value);
+    const data = DB.ventas.filter(r => r.date && r.date.getFullYear() === yr);
+    if (!data.length) {
+      nd.style.display = 'block'; w1.style.display = 'none';
+      ['v-k1','v-k2','v-k3','v-k4'].forEach(id => document.getElementById(id).textContent = '—'); return;
+    }
+    nd.style.display = 'none'; w1.style.display = 'block';
+    const byMes = {};
+    MESES.forEach((_,i) => { byMes[i] = {total:0,cnt:0}; });
+    data.forEach(r => { const m = r.date.getMonth(); byMes[m].total+=r.total; byMes[m].cnt++; });
+    const totals = MESES.map((_,i) => Math.round(byMes[i].total));
+    const grandTotal = data.reduce((a,r) => a+r.total, 0);
+    const maxIdx = totals.indexOf(Math.max(...totals.filter(t => t > 0)));
+    document.getElementById('v-k1').textContent = fmtN(grandTotal);
+    document.getElementById('v-k2').textContent = data.length;
+    document.getElementById('v-k3').textContent = data.length ? fmtN(grandTotal / data.length) : '—';
+    document.getElementById('v-k4').textContent = maxIdx >= 0 ? MESES[maxIdx] : '—';
+    mkChart('v-ch1', MESES, totals, '#e24b4a');
+  }
+}
+</script>
+</body>
+</html>
