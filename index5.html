@@ -95,14 +95,10 @@ table.cortes tr:hover td{background:#fafafa;}
       <div class="topbar-divider"></div>
       <div><div class="topbar-username" id="dash-username"></div><div class="topbar-role" id="dash-role"></div></div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn-logout" onclick="toggleDebug()" style="font-size:11px;">Debug</button>
-      <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
-    </div>
+    <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
   </div>
   <div class="dash-body">
     <div class="err-banner" id="err-banner"></div>
-    <div id="debug-panel" style="display:none;background:#f0f7ff;border:1px solid #b3d4f5;border-radius:8px;padding:12px 16px;font-size:12px;font-family:monospace;line-height:1.7;margin-bottom:1rem;color:#1a3a5c;white-space:pre-wrap;word-break:break-all;"></div>
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('compras',this)"><i class="ti ti-shopping-cart"></i>Compras</button>
       <button class="tab-btn" onclick="switchTab('guias',this)"><i class="ti ti-file-text"></i>Guias</button>
@@ -169,10 +165,6 @@ var guiaSeg='emision', ventaVista='dia', corteAnimal='all';
 var errores=[];
 
 // ---- AUTH ----
-function toggleDebug(){
-  var d=document.getElementById('debug-panel');
-  d.style.display=d.style.display==='none'?'block':'none';
-}
 function doLogin(){
   var sel=document.getElementById('sel-user').value;
   var pass=document.getElementById('inp-pass').value;
@@ -282,41 +274,9 @@ async function loadAll(){
   }
   // Join detalles con fechas de ventas
   joinDetallesFechas();
-
-  // --- DEBUG PANEL ---
-  var dbg=document.getElementById('debug-panel');
-  var lines=[];
-  lines.push('<strong>Estado de carga:</strong>');
-  lines.push('Ventas: '+DB.ventas.length+' registros | ventasFechaMap: '+Object.keys(ventasFechaMap).length+' IDs');
-  lines.push('Venta_Detalles: '+DB.detalles.length+' registros | con fecha: '+DB.detalles.filter(function(r){return r.date;}).length);
-  lines.push('Compras: '+DB.compras.length+' | Guias: '+DB.guias.length+' | Ingresos: '+DB.ingresos.length+' | Desposte: '+DB.desposte.length);
-  if(errores.length>0) lines.push('<span style="color:#c0392b">ERRORES: '+errores.join(' | ')+'</span>');
-  else lines.push('<span style="color:#1d9e75">Sin errores de carga</span>');
-  // Sample de ventas
-  if(DB.ventas.length>0){
-    var s=DB.ventas[0];
-    lines.push('Muestra Ventas[0]: id='+s.id+' fecha='+(s.date?s.date.toLocaleDateString('es-BO'):'null')+' total='+s.total);
-  }
-  // Sample de detalles
-  if(DB.detalles.length>0){
-    var d=DB.detalles[0];
-    lines.push('Muestra Detalles[0]: idVenta='+d.idVenta+' prod='+d.idProd+' nombre='+d.nombre+' kilos='+d.kilos+' sub='+d.subtotal+' fecha='+(d.date?d.date.toLocaleDateString('es-BO'):'null'));
-  }
-  // Meses disponibles en detalles
-  var mesesDet={};
-  DB.detalles.forEach(function(r){if(r.date){var k=r.date.getFullYear()+'-'+(r.date.getMonth()+1);mesesDet[k]=(mesesDet[k]||0)+1;}});
-  lines.push('Meses en Detalles: '+JSON.stringify(mesesDet));
-  var mesesVen={};
-  DB.ventas.forEach(function(r){if(r.date){var k=r.date.getFullYear()+'-'+(r.date.getMonth()+1);mesesVen[k]=(mesesVen[k]||0)+1;}});
-  lines.push('Meses en Ventas: '+JSON.stringify(mesesVen));
-
-  dbg.style.display='block';
-  dbg.innerHTML=lines.join('<br>');
-  // --- FIN DEBUG ---
-
   if(errores.length>0){
     banner.style.display='block';
-    banner.textContent='Algunas hojas no cargaron: '+errores.join(' | ');
+    banner.textContent='Advertencia: no se pudieron cargar algunas hojas. Verificar que el Sheet sea publico. ('+errores.join(' | ')+')';
   }
   populateAllFilters();
 }
