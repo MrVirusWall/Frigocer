@@ -306,9 +306,6 @@ async function loadAll(){
   var mesesDet={};
   DB.detalles.forEach(function(r){if(r.date){var k=r.date.getFullYear()+'-'+(r.date.getMonth()+1);mesesDet[k]=(mesesDet[k]||0)+1;}});
   lines.push('Meses en Detalles: '+JSON.stringify(mesesDet));
-  if(window._detallesHeaders) lines.push('Detalles cols: '+window._detallesHeaders.slice(0,8).join(' | '));
-  if(DB.detalles.length>0) lines.push('Detalles idVenta[0]='+DB.detalles[0].idVenta+' ventaMap[ese id]='+JSON.stringify(ventasFechaMap[DB.detalles[0].idVenta]||'NO MATCH'));
-  if(window._joinResult) lines.push('Join: '+JSON.stringify(window._joinResult));
   var mesesVen={};
   DB.ventas.forEach(function(r){if(r.date){var k=r.date.getFullYear()+'-'+(r.date.getMonth()+1);mesesVen[k]=(mesesVen[k]||0)+1;}});
   lines.push('Meses en Ventas: '+JSON.stringify(mesesVen));
@@ -342,28 +339,15 @@ function parseVentas(rows){
 }
 
 function parseDetalles(rows){
+  // Columnas: ID_Recibo_Detalle, ID_Venta, Nombre_Producto_Recibo / ID_Producto, Kilos_Recibo / Kilos, Cantidad_Recibo, Subtotal_Recibo / Subtotal
   if(rows.length<2) return [];
   var h=hdr(rows);
-  // Log ALL headers so we can see exact column names
-  console.log('Venta_Detalles TODAS las columnas ('+h.length+'):', h.join(' | '));
-  window._detallesHeaders=h; // expose for debug
-
-  // Find columns flexibly
-  var iVenta=-1, iProd=-1, iKilos=-1, iSub=-1;
-  h.forEach(function(col,i){
-    var c=col.toLowerCase();
-    if(c.indexOf('id_venta')>=0 || c==='venta' || c.indexOf('venta')>=0) iVenta=i;
-    if(c==='id_producto' || c.indexOf('id_producto')>=0 || c.indexOf('nombre_producto')>=0) iProd=i;
-    if(c.indexOf('kilo')>=0) iKilos=i;
-    if(c.indexOf('subtotal')>=0) iSub=i;
-  });
-  // If still not found, log sample row
-  if(rows.length>1) console.log('Detalles row[1]:', rows[1].slice(0,10).join(' | '));
-  console.log('Col indexes -> Venta:'+iVenta+' Prod:'+iProd+' Kilos:'+iKilos+' Sub:'+iSub);
-  if(iVenta<0||iProd<0){
-    console.warn('Venta_Detalles: NO SE ENCONTRARON columnas clave. Headers:', h);
-    return [];
-  }
+  console.log('Venta_Detalles headers:', h.join(', '));
+  var iVenta=colIdx(h,['ID_Venta']);
+  var iProd=colIdx(h,['ID_Producto','Nombre_Producto_Recibo','Nombre_Producto']);
+  var iKilos=colIdx(h,['Kilos_Recibo','Kilos']);
+  var iSub=colIdx(h,['Subtotal_Recibo','Subtotal']);
+  if(iVenta<0||iProd<0){console.warn('Venta_Detalles: cols faltantes',h.slice(0,8));return [];}
   var result=[];
   rows.slice(1).forEach(function(r){
     var idVenta=clean(r[iVenta]);
@@ -371,6 +355,7 @@ function parseDetalles(rows){
     var kilos=iKilos>=0?pNum(r[iKilos]):0;
     var sub=iSub>=0?pNum(r[iSub]):0;
     if(!idProd||(!kilos&&!sub)) return;
+    // Resolver nombre y tipo desde catalogo
     var info=CATALOGO[idProd];
     var nombre=info?info.n:idProd;
     var tipo=info?info.t:'O';
@@ -380,21 +365,14 @@ function parseDetalles(rows){
 }
 
 function joinDetallesFechas(){
-  var sinFecha=0, conFecha=0;
-  // Log a few keys from each map to compare
-  var detKeys=DB.detalles.slice(0,3).map(function(r){return r.idVenta;});
-  var ventKeys=Object.keys(ventasFechaMap).slice(0,3);
-  console.log('Join debug - detalle idVentas sample:', detKeys);
-  console.log('Join debug - ventasFechaMap keys sample:', ventKeys);
+  // Asignar fecha a cada detalle via ventasFechaMap[idVenta]
+  var sinFecha=0;
   DB.detalles.forEach(function(r){
     var d=ventasFechaMap[r.idVenta]||null;
-    // Try trimmed version in case of whitespace
-    if(!d && r.idVenta) d=ventasFechaMap[r.idVenta.trim()]||null;
     r.date=d;
-    if(d) conFecha++; else sinFecha++;
+    if(!d) sinFecha++;
   });
-  console.log('Join result: con fecha='+conFecha+' sin fecha='+sinFecha);
-  window._joinResult={conFecha:conFecha,sinFecha:sinFecha};
+  console.log('Detalles totales:',DB.detalles.length,'sin fecha:',sinFecha);
 }
 
 function parseCompras(rows){
