@@ -6,7 +6,8 @@
 <title>FrigoCer - Panel de gestion</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<style>*{box-sizing:border-box;margin:0;padding:0;}
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f2;color:#1a1a1a;min-height:100vh;}
 #login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;padding:2rem 1rem;}
 .login-logo{width:200px;height:auto;}
@@ -61,28 +62,30 @@ table.cortes td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#1a1a1a;w
 table.cortes tr:last-child td{border-bottom:none;}
 table.cortes tr:hover td{background:#fafafa;}
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
-.badge-M{background:#fff0f0;color:#c0392b;}
-.badge-E{background:#f0f4ff;color:#2c5cc5;}
-.badge-V{background:#f5f0ff;color:#6b3fa0;}
+.badge-m{background:#fff0f0;color:#c0392b;}
+.badge-e{background:#f0f4ff;color:#2c5cc5;}
+.badge-o{background:#f5f0ff;color:#6b3fa0;}
 .num{text-align:right;}
 .precio-avg{font-size:11px;color:#aaa;}
-.err-banner{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:10px 14px;font-size:12px;color:#856404;margin-bottom:1rem;display:none;}
-@media(max-width:480px){.kpi-value{font-size:18px;}.tab-btn{padding:7px 9px;font-size:11px;}.topbar-logo{height:28px;}}</style>
+@media(max-width:480px){.kpi-value{font-size:18px;}.tab-btn{padding:7px 9px;font-size:11px;}.topbar-logo{height:28px;}}
+</style>
 </head>
 <body>
 
 <div id="login-screen">
   <img src="data:image/png;base64,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55x1TZj+pt3y+7TQ4birqu3U7+WSuranyDD7gGk/DqfEBSXTOlfTxuniEUpaOdgdzBp7wD3j2rw4xY7djljprPa4RFTU7OVo73HvcT3knqVkloYq3iPjneXHa/NpsmTbTY+7WPDnMzPWee3pECIilUBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQCqJ5y6V+a3x82/lTcagv37d/KO3V7FTbXuzyWbVK7tdGWx1knnkR7nCTqSP6XMPgsvilZmlZd/+H+atdXlxz4zXeP0n+VmtF5I5NLMedHtsKNrT7xuD94K29RDwsX9lxwSWzPcPOLXOQBv2xvJc0/bzD4BS8rumtFsVZj5OU43p7afiGbHb/afSZ3j7SIiKdliIiAiIgEBwIIBB7QV+IooohtFGyMHua0BftEe7z4C+VLUwVUbpKeVsjWyPjcR3Oa4tcPgQQvqoZym75tpjfLpX0tpbe8VrKl9adiQ+le87vHMN+Uc256gjr3HdRZcvs43mOS9oNDOttOOloi/lEztv0iZ8/kmZFqOmWf2fPLbLUW9slPU05AqKaX1mb9h3HQg9evsW3L7pet696s8lfU6bLpss4s1e7aPGJERF9IBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAUS8SuFOyHFm3yhjc+4WppcWtG5kh7XD3j1h8fFS0v49rXscxwDmuGxB7wo8uOMtJpPmu8O12TQammox+NZ9Y84/WFOdBMjfjupNvLpSylrnCknG/Qh5AaT7ncv3q46pNfLOaDVmpslvaQI7wYaZoPUDyuzB9myuyTsNyqHDZmK2pPlLr+3VMV82DU08b1/bbb9/sIq6ah6lag3asrJMNoa+lsNLI6MVcNJzmXlOxcXEHYbju7u1aljut+d2qced1sV1g36xVMTQfg5oB+3dSW4jirbaYn6qODsXr8+H2lbV3/135x0nltE9N1uEUNWriGxWeBpuNsudJNt6TY2tlbv7DuD9y+1XxCYZG0mCiu858PJMb+LlN75g237zNns1xWLd32E/wDuvgl9FXK/8RlwkBZY8fgpx/pKqUyH+q3YD7Svppdrjea7K4LZlPmz6StkEUcsUXIYXk7N38W79OvUdqjjX4ZtFYlct2P4pTBbNakRtG+28b/bf91iVh8oyewYxStqb7dIKJjt+QPJLn7d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zyFVuQ2PY8zWDYBxGzj6Ww7Ct9fo7816jVOeYZkhsd1r6ZtPcI56FtXBUABo5g0uaWO9EdQ74dSs7ecRy2to200WdMkZLTmGsjr7NFUxTEuceZrA5nKdncu27hs1u4J3JDLaaXaO+YXQ3OPI6PJGTB5bcaWERMmHOdvQBPK4DYEeIPZ2LY1qek2CWvTjCaXFrRNPPBC98r5ZtuaSR7uZx2AAA3PQDsC2xAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREH//Z" alt="FrigoCer" class="login-logo">
   <div class="login-card">
-    <div><label>Usuario</label>
+    <div><label for="sel-user">Usuario</label>
       <select id="sel-user">
         <option value="">- Seleccionar -</option>
         <option value="Francisco|gerente">Francisco (Gerente)</option>
         <option value="Gonzalo|gerente">Gonzalo (Gerente)</option>
         <option value="Camal|encargado">Camal (Encargado)</option>
-      </select></div>
-    <div><label>Contrasena</label>
-      <input type="password" id="inp-pass" placeholder="..." /></div>
+      </select>
+    </div>
+    <div><label for="inp-pass">Contrasena</label>
+      <input type="password" id="inp-pass" placeholder="..." />
+    </div>
     <div class="err-msg" id="err-login"></div>
     <button class="btn-primary" onclick="doLogin()">Ingresar</button>
   </div>
@@ -98,7 +101,6 @@ table.cortes tr:hover td{background:#fafafa;}
     <button class="btn-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
   </div>
   <div class="dash-body">
-    <div class="err-banner" id="err-banner"></div>
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('compras',this)"><i class="ti ti-shopping-cart"></i>Compras</button>
       <button class="tab-btn" onclick="switchTab('guias',this)"><i class="ti ti-file-text"></i>Guias</button>
@@ -110,61 +112,63 @@ table.cortes tr:hover td{background:#fafafa;}
 
     <div class="tab-content active" id="tab-compras">
       <div class="filter-row"><label>Mes:</label><select id="c-mes" onchange="renderCompras()"></select><label>Ano:</label><select id="c-anio" onchange="renderCompras()"></select></div>
-      <div class="kpi-grid"><div class="kpi"><div class="kpi-label">Registros</div><div class="kpi-value" id="c-k1">-</div></div><div class="kpi"><div class="kpi-label">Animales</div><div class="kpi-value" id="c-k2">-</div></div><div class="kpi"><div class="kpi-label">Kg comprados</div><div class="kpi-value" id="c-k3">-</div><div class="kpi-unit">kg</div></div><div class="kpi"><div class="kpi-label">Costo total</div><div class="kpi-value" id="c-k4">-</div><div class="kpi-unit">Bs.</div></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#e24b4a"></span>Animales por dia</div><div class="loading-msg" id="c-load">Cargando...</div><div style="position:relative;width:100%;height:220px;display:none" id="c-w1"><canvas id="c-ch1"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#378add"></span>Peso total por dia (kg)</div><div style="position:relative;width:100%;height:220px"><canvas id="c-ch2"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#1d9e75"></span>Costo total por dia (Bs.)</div><div style="position:relative;width:100%;height:220px"><canvas id="c-ch3"></canvas></div></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-label">Registros</div><div class="kpi-value" id="c-k1">-</div></div>
+        <div class="kpi"><div class="kpi-label">Animales</div><div class="kpi-value" id="c-k2">-</div></div>
+        <div class="kpi"><div class="kpi-label">Kg comprados</div><div class="kpi-value" id="c-k3">-</div><div class="kpi-unit">kg</div></div>
+        <div class="kpi"><div class="kpi-label">Costo total</div><div class="kpi-value" id="c-k4">-</div><div class="kpi-unit">Bs.</div></div>
+      </div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#e24b4a;"></span>Animales comprados por dia</div><div class="loading-msg" id="c-load">Cargando datos...</div><div style="position:relative;width:100%;height:220px;display:none;" id="c-w1"><canvas id="c-ch1"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#378add;"></span>Peso total por dia (kg)</div><div style="position:relative;width:100%;height:220px;"><canvas id="c-ch2"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#1d9e75;"></span>Costo total por dia (Bs.)</div><div style="position:relative;width:100%;height:220px;"><canvas id="c-ch3"></canvas></div></div>
     </div>
 
     <div class="tab-content" id="tab-guias">
       <div class="filter-row"><label>Ver por:</label><div class="seg-ctrl"><button class="seg-btn active" id="g-seg-emision" onclick="setGuiaSeg('emision')">Fecha matanza</button><button class="seg-btn" id="g-seg-carga" onclick="setGuiaSeg('carga')">Fecha carga</button></div><label>Mes:</label><select id="g-mes" onchange="renderGuias()"></select><label>Ano:</label><select id="g-anio" onchange="renderGuias()"></select></div>
       <div class="kpi-grid"><div class="kpi"><div class="kpi-label">Guias</div><div class="kpi-value" id="g-k1">-</div></div><div class="kpi"><div class="kpi-label">Lotes</div><div class="kpi-value" id="g-k2">-</div></div><div class="kpi"><div class="kpi-label">Kg total</div><div class="kpi-value" id="g-k3">-</div><div class="kpi-unit">kg</div></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#ba7517"></span>Kg en guias por dia por lote</div><div class="loading-msg" id="g-load">Cargando...</div><div style="position:relative;width:100%;height:260px;display:none" id="g-w1"><canvas id="g-ch1"></canvas></div><div class="no-data" id="g-nodata">Sin datos para el periodo</div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#ba7517;"></span>Kg en guias por dia por lote</div><div class="loading-msg" id="g-load">Cargando datos...</div><div style="position:relative;width:100%;height:260px;display:none;" id="g-w1"><canvas id="g-ch1"></canvas></div><div class="no-data" id="g-nodata">Sin datos para el periodo</div></div>
     </div>
 
     <div class="tab-content" id="tab-ingresos">
       <div class="filter-row"><label>Mes:</label><select id="i-mes" onchange="renderIngresos()"></select><label>Ano:</label><select id="i-anio" onchange="renderIngresos()"></select></div>
       <div class="kpi-grid"><div class="kpi"><div class="kpi-label">Animales recibidos</div><div class="kpi-value" id="i-k1">-</div></div><div class="kpi"><div class="kpi-label">Lotes</div><div class="kpi-value" id="i-k2">-</div></div><div class="kpi"><div class="kpi-label">Kg gancho</div><div class="kpi-value" id="i-k3">-</div><div class="kpi-unit">kg</div></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#534ab7"></span>Kg gancho recibido por dia</div><div class="loading-msg" id="i-load">Cargando...</div><div style="position:relative;width:100%;height:220px;display:none" id="i-w1"><canvas id="i-ch1"></canvas></div><div class="no-data" id="i-nodata">Sin datos</div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#afa9ec"></span>Animales recibidos por dia</div><div style="position:relative;width:100%;height:200px"><canvas id="i-ch2"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#534ab7;"></span>Kg gancho recibido por dia</div><div class="loading-msg" id="i-load">Cargando datos...</div><div style="position:relative;width:100%;height:220px;display:none;" id="i-w1"><canvas id="i-ch1"></canvas></div><div class="no-data" id="i-nodata">Sin datos</div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#afa9ec;"></span>Animales recibidos por dia</div><div style="position:relative;width:100%;height:200px;"><canvas id="i-ch2"></canvas></div></div>
     </div>
 
     <div class="tab-content" id="tab-desposte">
       <div class="filter-row"><label>Mes:</label><select id="d-mes" onchange="renderDesposte()"></select><label>Ano:</label><select id="d-anio" onchange="renderDesposte()"></select></div>
       <div class="kpi-grid"><div class="kpi"><div class="kpi-label">Registros</div><div class="kpi-value" id="d-k1">-</div></div><div class="kpi"><div class="kpi-label">Lotes</div><div class="kpi-value" id="d-k2">-</div></div><div class="kpi"><div class="kpi-label">Kg obtenidos</div><div class="kpi-value" id="d-k3">-</div><div class="kpi-unit">kg</div></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#0f6e56"></span>Kg despostados por dia por tipo</div><div class="loading-msg" id="d-load">Cargando...</div><div style="position:relative;width:100%;height:260px;display:none" id="d-w1"><canvas id="d-ch1"></canvas></div><div class="no-data" id="d-nodata">Sin datos</div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#0f6e56;"></span>Kg despostados por dia por tipo</div><div class="loading-msg" id="d-load">Cargando datos...</div><div style="position:relative;width:100%;height:260px;display:none;" id="d-w1"><canvas id="d-ch1"></canvas></div><div class="no-data" id="d-nodata">Sin datos</div></div>
     </div>
 
     <div class="tab-content" id="tab-ventas">
       <div class="filter-row"><label>Vista:</label><div class="seg-ctrl"><button class="seg-btn active" id="v-seg-dia" onclick="setVentaVista('dia')">Diaria</button><button class="seg-btn" id="v-seg-mes" onclick="setVentaVista('mes')">Mensual</button></div><label id="v-lbl-mes">Mes:</label><select id="v-mes" onchange="renderVentas()"></select><label>Ano:</label><select id="v-anio" onchange="renderVentas()"></select></div>
       <div class="kpi-grid"><div class="kpi highlight"><div class="kpi-label">Total vendido</div><div class="kpi-value" id="v-k1">-</div><div class="kpi-unit">Bs.</div></div><div class="kpi"><div class="kpi-label">Transacciones</div><div class="kpi-value" id="v-k2">-</div></div><div class="kpi"><div class="kpi-label">Promedio</div><div class="kpi-value" id="v-k3">-</div><div class="kpi-unit">Bs.</div></div><div class="kpi"><div class="kpi-label">Mejor dia/mes</div><div class="kpi-value" id="v-k4">-</div></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#e24b4a"></span><span id="v-chart-title">Total ventas por dia (Bs.)</span></div><div class="loading-msg" id="v-load">Cargando...</div><div style="position:relative;width:100%;height:260px;display:none" id="v-w1"><canvas id="v-ch1"></canvas></div><div class="no-data" id="v-nodata">Sin datos</div></div>
-      <div class="chart-card" id="v-card2"><div class="chart-title"><span class="chart-dot" style="background:#378add"></span>Transacciones por dia</div><div style="position:relative;width:100%;height:200px"><canvas id="v-ch2"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#e24b4a;"></span><span id="v-chart-title">Total ventas por dia (Bs.)</span></div><div class="loading-msg" id="v-load">Cargando datos...</div><div style="position:relative;width:100%;height:260px;display:none;" id="v-w1"><canvas id="v-ch1"></canvas></div><div class="no-data" id="v-nodata">Sin datos</div></div>
+      <div class="chart-card" id="v-card2"><div class="chart-title"><span class="chart-dot" style="background:#378add;"></span>Transacciones por dia</div><div style="position:relative;width:100%;height:200px;"><canvas id="v-ch2"></canvas></div></div>
     </div>
 
     <div class="tab-content" id="tab-cortes">
       <div class="filter-row"><label>Mes:</label><select id="vd-mes" onchange="renderCortes()"></select><label>Ano:</label><select id="vd-anio" onchange="renderCortes()"></select><label>Animal:</label><div class="seg-ctrl"><button class="seg-btn active" id="vd-seg-all" onclick="setCorteAnimal('all')">Todos</button><button class="seg-btn" id="vd-seg-M" onclick="setCorteAnimal('M')">Marrana</button><button class="seg-btn" id="vd-seg-E" onclick="setCorteAnimal('E')">Engorde</button></div></div>
       <div class="kpi-grid"><div class="kpi highlight"><div class="kpi-label">Subtotal periodo</div><div class="kpi-value" id="vd-k1">-</div><div class="kpi-unit">Bs.</div></div><div class="kpi"><div class="kpi-label">Kg vendidos</div><div class="kpi-value" id="vd-k2">-</div><div class="kpi-unit">kg</div></div><div class="kpi"><div class="kpi-label">Precio prom./kg</div><div class="kpi-value" id="vd-k3">-</div><div class="kpi-unit">Bs./kg</div></div><div class="kpi"><div class="kpi-label">Cortes distintos</div><div class="kpi-value" id="vd-k4">-</div></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#e24b4a"></span>Top cortes por kg vendido</div><div class="loading-msg" id="vd-load">Cargando...</div><div style="position:relative;width:100%;height:300px;display:none" id="vd-w1"><canvas id="vd-ch1"></canvas></div><div class="no-data" id="vd-nodata1">Sin datos</div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#1d9e75"></span>Top cortes por subtotal (Bs.)</div><div style="position:relative;width:100%;height:300px;display:none" id="vd-w2"><canvas id="vd-ch2"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#333"></span>Tabla completa por corte</div><div class="table-wrap" id="vd-tabla"><div class="loading-msg">Cargando...</div></div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#e24b4a;"></span>Top cortes por kg vendido</div><div class="loading-msg" id="vd-load">Cargando datos...</div><div style="position:relative;width:100%;height:300px;display:none;" id="vd-w1"><canvas id="vd-ch1"></canvas></div><div class="no-data" id="vd-nodata1">Sin datos</div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#1d9e75;"></span>Top cortes por subtotal (Bs.)</div><div style="position:relative;width:100%;height:300px;display:none;" id="vd-w2"><canvas id="vd-ch2"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title"><span class="chart-dot" style="background:#333;"></span>Tabla completa por corte</div><div class="table-wrap" id="vd-tabla"><div class="loading-msg">Cargando...</div></div></div>
     </div>
 
   </div>
 </div>
 
 <script>
-var CATALOGO={'M1':{n:'MAGRA',t:'M'},'M2':{n:'CARNE',t:'M'},'M3':{n:'TOCINO',t:'M'},'M4':{n:'TOCINO DE LOMO',t:'M'},'M5':{n:'EMPELLA',t:'M'},'M6':{n:'LENGUA',t:'M'},'M7':{n:'CORAZON',t:'M'},'M8':{n:'PANCETA',t:'M'},'M10':{n:'CABEZA',t:'M'},'M11':{n:'COLA PULIDA',t:'M'},'M12':{n:'UBRE',t:'M'},'M14':{n:'CUERO M',t:'M'},'M15':{n:'HUESOS',t:'M'},'M16':{n:'DESP. CARNE',t:'M'},'M17':{n:'DESP. CUERO',t:'M'},'M18':{n:'DESP. RINON',t:'M'},'E1':{n:'MAGRA',t:'E'},'E2':{n:'CARNE',t:'E'},'E3':{n:'TOCINO',t:'E'},'E4':{n:'TOCINO DE LOMO',t:'E'},'E5':{n:'EMPELLA',t:'E'},'E6':{n:'LENGUA',t:'E'},'E7':{n:'CUERO DE PRIMERA',t:'E'},'E8':{n:'CUERO',t:'E'},'E9':{n:'RECORTE DE CUERO',t:'E'},'E10':{n:'ROSTRO',t:'E'},'E11':{n:'CUELLO C/C',t:'E'},'E12':{n:'CARRE S/C',t:'E'},'E13':{n:'COSTILLA C/CUERO',t:'E'},'E14':{n:'COSTILLA C/CUERO/EMP',t:'E'},'E15':{n:'COSTILLA SC/SM',t:'E'},'E16':{n:'COSTILLA SC/CM',t:'E'},'E17':{n:'COSTILLA PARRILLERA',t:'E'},'E18':{n:'PANCETA',t:'E'},'E19':{n:'LOMO PULIDO',t:'E'},'E20':{n:'MATAMBRE',t:'E'},'E21':{n:'CABEZA',t:'E'},'E22':{n:'PALETA CON HUESO',t:'E'},'E23':{n:'PALETA DESHUESADA',t:'E'},'E24':{n:'PIERNA CON HUESO',t:'E'},'E25':{n:'PIERNA DESHUESADA',t:'E'},'E26':{n:'BONDIOLA',t:'E'},'E27':{n:'COLA',t:'E'},'E28':{n:'COLA PULIDA',t:'E'},'E29':{n:'CERDO GANCHO',t:'E'},'E30':{n:'PATAS',t:'E'},'E31':{n:'HUESOS',t:'E'},'E32':{n:'DESP. CARNE',t:'E'},'E33':{n:'DESP. CUERO',t:'E'},'E34':{n:'DESP. RINON',t:'E'},'6028cc9c':{n:'CORAZON',t:'E'},'a3a64006':{n:'ROSTRO M',t:'M'},'78be15ed':{n:'CARRE M',t:'M'},'3fcfa12b':{n:'COSTILLA M',t:'M'},'ca42a393':{n:'CUELLO M',t:'M'},'c4fcfb7j':{n:'PESO VIVO',t:'V'},'d23e2e2':{n:'PANCETA 23x5',t:'M'},'abc3457':{n:'DESP. UBRE',t:'M'},'123abcd':{n:'DESP. UBRE',t:'E'},'2345dfs':{n:'DESP. ROSTRO',t:'E'},'2345djs':{n:'DESP. ROSTRO',t:'M'},'3f7aedc8':{n:'PALETA DESHUESADA M',t:'M'},'bf5c88ba':{n:'MAGRA M ESP',t:'M'},'bf5c88j':{n:'PIERNA DESHUESADA M',t:'M'}};
-var USERS={Francisco:'1234',Gonzalo:'1234',Camal:'1234'};
-var SID='1xUJThhPiYD2upK89oAkYxadlsjolaLPDZp36HLpdZEE';
-var MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-var DB={compras:[],guias:[],ingresos:[],desposte:[],ventas:[],detalles:[]};
-var ventasFechaMap={};  // ID_Venta -> Date  (join key)
-var charts={};
-var guiaSeg='emision', ventaVista='dia', corteAnimal='all';
-var errores=[];
 
-// ---- AUTH ----
+const USERS={Francisco:'1234',Gonzalo:'1234',Camal:'1234'};
+const SID='1xUJThhPiYD2upK89oAkYxadlsjolaLPDZp36HLpdZEE';
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+let catalogo={M1:'MAGRA',M2:'CARNE',M3:'TOCINO',M4:'TOCINO DE LOMO',M5:'EMPELLA',M6:'LENGUA',M7:'CORAZON',M8:'PANCETA',M10:'CABEZA',M11:'COLA PULIDA',M12:'UBRE',M14:'CUERO M',M15:'HUESOS',M16:'DESP. CARNE',M17:'DESP. CUERO',M18:'DESP. RINON',E1:'MAGRA',E2:'CARNE',E3:'TOCINO',E4:'TOCINO DE LOMO',E5:'EMPELLA',E6:'LENGUA',E7:'CUERO DE PRIMERA',E8:'CUERO',E9:'RECORTE DE CUERO',E10:'ROSTRO',E11:'CUELLO C/C',E12:'CARRE S/C',E13:'COSTILLA C/CUERO',E14:'COSTILLA C/CUERO/EMP',E15:'COSTILLA SC/SM',E16:'COSTILLA SC/CM',E17:'COSTILLA PARRILLERA',E18:'PANCETA',E19:'LOMO PULIDO',E20:'MATAMBRE',E21:'CABEZA',E22:'PALETA CON HUESO',E23:'PALETA DESHUESADA',E24:'PIERNA CON HUESO',E25:'PIERNA DESHUESADA',E26:'BONDIOLA',E27:'COLA',E28:'COLA PULIDA',E29:'CERDO GANCHO',E30:'PATAS',E31:'HUESOS',E32:'DESP. CARNE',E33:'DESP. CUERO',E34:'DESP. RINON'};
+let DB={compras:[],guias:[],ingresos:[],desposte:[],ventas:[],cortes:[]};
+let charts={}, guiaSeg='emision', ventaVista='dia', corteAnimal='all';
+
 function doLogin(){
   var sel=document.getElementById('sel-user').value;
   var pass=document.getElementById('inp-pass').value;
@@ -190,7 +194,12 @@ function switchTab(id,btn){
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
 }
-function setGuiaSeg(v){guiaSeg=v;document.getElementById('g-seg-emision').classList.toggle('active',v==='emision');document.getElementById('g-seg-carga').classList.toggle('active',v==='carga');renderGuias();}
+function setGuiaSeg(v){
+  guiaSeg=v;
+  document.getElementById('g-seg-emision').classList.toggle('active',v==='emision');
+  document.getElementById('g-seg-carga').classList.toggle('active',v==='carga');
+  renderGuias();
+}
 function setVentaVista(v){
   ventaVista=v;
   document.getElementById('v-seg-dia').classList.toggle('active',v==='dia');
@@ -207,11 +216,12 @@ function setCorteAnimal(v){
   renderCortes();
 }
 
-// ---- CSV PARSER ----
 function parseCSV(txt){
-  var rows=[]; var lines=txt.split('\n');
+  var rows=[];
+  var lines=txt.split('\n');
   for(var li=0;li<lines.length;li++){
-    var line=lines[li]; if(!line.trim()) continue;
+    var line=lines[li];
+    if(!line.trim()) continue;
     var cols=[]; var cur=''; var inQ=false;
     for(var ci=0;ci<line.length;ci++){
       var c=line[ci];
@@ -219,159 +229,168 @@ function parseCSV(txt){
       else if(c===',' && !inQ){cols.push(cur.trim());cur='';}
       else cur+=c;
     }
-    cols.push(cur.trim()); rows.push(cols);
+    cols.push(cur.trim());
+    rows.push(cols);
   }
   return rows;
 }
-function clean(s){return s?s.replace(/"/g,'').trim():'';}
 function pDate(s){
   if(!s) return null;
-  var v=clean(s); var p=v.split('/');
-  if(p.length===3){var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));return isNaN(d.getTime())?null:d;}
-  var iso=new Date(v.split(' ')[0]); return isNaN(iso.getTime())?null:iso;
+  var clean=s.replace(/"/g,'').trim();
+  var p=clean.split('/');
+  if(p.length===3){
+    var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+    return isNaN(d.getTime())?null:d;
+  }
+  var iso=new Date(clean.split(' ')[0]);
+  return isNaN(iso.getTime())?null:iso;
 }
 function pNum(v){
-  if(!v&&v!==0) return 0;
-  return parseFloat(String(v).replace(/"/g,'').replace(/\./g,'').replace(',','.'))||0;
+  if(!v && v!==0) return 0;
+  var s=String(v).replace(/"/g,'');
+  s=s.replace(/\./g,'').replace(',','.');
+  return parseFloat(s)||0;
 }
 function fmtDate(d){return d.toLocaleDateString('es-BO',{day:'2-digit',month:'2-digit'});}
 function fmtN(n){return Math.round(n).toLocaleString('es-BO');}
-function fmtDec(n,dec){dec=dec||1;return parseFloat(n).toLocaleString('es-BO',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
-function sortDayLabels(labels){
+function fmtDec(n,dec){
+  dec=dec||1;
+  return parseFloat(n).toLocaleString('es-BO',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+}
+function sortLabels(labels){
   return labels.sort(function(a,b){
     var pa=a.split('/'); var pb=b.split('/');
     return new Date(2025,parseInt(pa[1])-1,parseInt(pa[0]))-new Date(2025,parseInt(pb[1])-1,parseInt(pb[0]));
   });
 }
-function hdr(rows){return rows[0].map(function(x){return clean(x);});}
-function colIdx(h,terms){return h.findIndex(function(x){return terms.some(function(t){return x===t||x.includes(t);});});}
 
-// ---- LOAD ----
 async function loadAll(){
-  var banner=document.getElementById('err-banner');
   var sheets=[
-    {key:'ventas',   sheet:'Ventas',            parse:parseVentas},
-    {key:'detalles', sheet:'Venta_Detalles',     parse:parseDetalles},
-    {key:'compras',  sheet:'Compras',            parse:parseCompras},
-    {key:'guias',    sheet:'Guias_N8N',          parse:parseGuias},
-    {key:'ingresos', sheet:'Ingresos',           parse:parseIngresos},
-    {key:'desposte', sheet:'Inventario_Desposte',parse:parseDesposte}
+    {key:'compras', sheet:'Compras',            parse:parseCompras},
+    {key:'guias',   sheet:'Guias_N8N',           parse:parseGuias},
+    {key:'ingresos',sheet:'Ingresos',            parse:parseIngresos},
+    {key:'desposte',sheet:'Inventario_Desposte', parse:parseDesposte},
+    {key:'ventas',  sheet:'Ventas',              parse:parseVentas},
+    {key:'_prod',   sheet:'Productos',           parse:parseProductos},
+    {key:'cortes',  sheet:'Venta_Detalles',      parse:parseCortesDetalle}
   ];
-  errores=[];
   for(var si=0;si<sheets.length;si++){
     var s=sheets[si];
     try{
       var url='https://docs.google.com/spreadsheets/d/'+SID+'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(s.sheet);
       var res=await fetch(url);
-      if(!res.ok) throw new Error('HTTP '+res.status);
       var txt=await res.text();
-      if(txt.indexOf('<!DOCTYPE')>=0) throw new Error('Acceso denegado (hoja privada)');
-      DB[s.key]=s.parse(parseCSV(txt));
-    }catch(e){
-      errores.push(s.sheet+': '+e.message);
-      console.warn(s.sheet, e.message);
-    }
-  }
-  // Join detalles con fechas de ventas
-  joinDetallesFechas();
-  if(errores.length>0){
-    banner.style.display='block';
-    banner.textContent='Advertencia: no se pudieron cargar algunas hojas. Verificar que el Sheet sea publico. ('+errores.join(' | ')+')';
+      var parsed=s.parse(parseCSV(txt));
+      if(s.key!=='_prod') DB[s.key]=parsed;
+    }catch(e){console.warn(s.key,e);}
   }
   populateAllFilters();
 }
 
-// ---- PARSERS ----
-function parseVentas(rows){
-  if(rows.length<2) return [];
-  var h=hdr(rows);
-  var iID=colIdx(h,['ID_Venta']);
-  var iFecha=colIdx(h,['Fecha_Venta']);
-  var iTotal=colIdx(h,['Total_Venta']);
-  if(iID<0||iFecha<0){console.warn('Ventas: cols faltantes',h.slice(0,8));return [];}
-  var result=[];
-  rows.slice(1).forEach(function(r){
-    var id=clean(r[iID]); var fecha=pDate(r[iFecha]); var total=pNum(r[iTotal]);
-    if(id&&fecha) ventasFechaMap[id]=fecha;  // guardar mapa para join
-    if(fecha&&total>0) result.push({date:fecha,total:total,id:id});
-  });
-  return result;
-}
-
-function parseDetalles(rows){
-  // Columnas: ID_Recibo_Detalle, ID_Venta, Nombre_Producto_Recibo / ID_Producto, Kilos_Recibo / Kilos, Cantidad_Recibo, Subtotal_Recibo / Subtotal
-  if(rows.length<2) return [];
-  var h=hdr(rows);
-  console.log('Venta_Detalles headers:', h.join(', '));
-  var iVenta=colIdx(h,['ID_Venta']);
-  var iProd=colIdx(h,['ID_Producto','Nombre_Producto_Recibo','Nombre_Producto']);
-  var iKilos=colIdx(h,['Kilos_Recibo','Kilos']);
-  var iSub=colIdx(h,['Subtotal_Recibo','Subtotal']);
-  if(iVenta<0||iProd<0){console.warn('Venta_Detalles: cols faltantes',h.slice(0,8));return [];}
-  var result=[];
-  rows.slice(1).forEach(function(r){
-    var idVenta=clean(r[iVenta]);
-    var idProd=clean(r[iProd]);
-    var kilos=iKilos>=0?pNum(r[iKilos]):0;
-    var sub=iSub>=0?pNum(r[iSub]):0;
-    if(!idProd||(!kilos&&!sub)) return;
-    // Resolver nombre y tipo desde catalogo
-    var info=CATALOGO[idProd];
-    var nombre=info?info.n:idProd;
-    var tipo=info?info.t:'O';
-    result.push({idVenta:idVenta,idProd:idProd,nombre:nombre,tipo:tipo,kilos:kilos,subtotal:sub,date:null});
-  });
-  return result;
-}
-
-function joinDetallesFechas(){
-  // Asignar fecha a cada detalle via ventasFechaMap[idVenta]
-  var sinFecha=0;
-  DB.detalles.forEach(function(r){
-    var d=ventasFechaMap[r.idVenta]||null;
-    r.date=d;
-    if(!d) sinFecha++;
-  });
-  console.log('Detalles totales:',DB.detalles.length,'sin fecha:',sinFecha);
-}
+function hdr(rows){return rows[0].map(function(x){return x.replace(/"/g,'').trim();});}
+function col(h,terms){return h.findIndex(function(x){return terms.some(function(t){return x.includes(t);});});}
 
 function parseCompras(rows){
   if(rows.length<2) return [];
   var h=hdr(rows);
-  var iD=colIdx(h,['Fecha_Compra','Fecha']);
-  var iA=colIdx(h,['Cantidad_Animales']);
-  var iP=colIdx(h,['Peso_Total_Kg','Peso_Total']);
-  var iC=colIdx(h,['Costo_Final_Total','Costo_Final']);
+  var iD=col(h,['Fecha_Compra','Fecha']);
+  var iA=col(h,['Cantidad_Animales']);
+  var iP=col(h,['Peso_Total']);
+  var iC=col(h,['Costo_Final']);
   return rows.slice(1).map(function(r){return{date:pDate(r[iD]),anim:pNum(r[iA]),peso:pNum(r[iP]),costo:pNum(r[iC])};}).filter(function(r){return r.date;});
 }
 function parseGuias(rows){
   if(rows.length<2) return [];
   var h=hdr(rows);
-  var iCarga=colIdx(h,['Fecha_Carga']);
-  var iLote=colIdx(h,['ID_Lote']);
-  var iEmision=colIdx(h,['Fecha_Emision_Guia','Emision']);
-  var iPeso=colIdx(h,['Peso_guia','Peso_Guia','Peso']);
-  return rows.slice(1).map(function(r){return{fechaCarga:pDate(r[iCarga]),fechaEmision:pDate(r[iEmision]),lote:r[iLote]?clean(r[iLote]):'?',peso:pNum(r[iPeso])};}).filter(function(r){return r.fechaCarga||r.fechaEmision;});
+  var iCarga=col(h,['Fecha_Carga']);
+  var iLote=col(h,['ID_Lote']);
+  var iEmision=col(h,['Emision','Emision_Guia']);
+  var iPeso=col(h,['Peso_guia','Peso']);
+  return rows.slice(1).map(function(r){return{fechaCarga:pDate(r[iCarga]),fechaEmision:pDate(r[iEmision]),lote:r[iLote]?r[iLote].replace(/"/g,'').trim():'?',peso:pNum(r[iPeso])};}).filter(function(r){return r.fechaCarga||r.fechaEmision;});
 }
 function parseIngresos(rows){
   if(rows.length<2) return [];
   var h=hdr(rows);
-  var iLote=colIdx(h,['ID_Lote']);
-  var iFecha=colIdx(h,['Fecha_Ingreso']);
-  var iPeso=colIdx(h,['Peso_Gancho_Recibido_Kg','Peso_Gancho','Gancho']);
-  return rows.slice(1).map(function(r){return{lote:r[iLote]?clean(r[iLote]):'?',date:pDate(r[iFecha]),peso:pNum(r[iPeso])};}).filter(function(r){return r.date&&r.peso>0;});
+  var iLote=col(h,['ID_Lote']);
+  var iFecha=col(h,['Fecha_Ingreso']);
+  var iPeso=col(h,['Peso_Gancho','Gancho']);
+  return rows.slice(1).map(function(r){return{lote:r[iLote]?r[iLote].replace(/"/g,'').trim():'?',date:pDate(r[iFecha]),peso:pNum(r[iPeso])};}).filter(function(r){return r.date&&r.peso>0;});
 }
 function parseDesposte(rows){
   if(rows.length<2) return [];
   var h=hdr(rows);
-  var iLote=colIdx(h,['ID_Lote']);
-  var iFecha=colIdx(h,['Fecha_Desposte']);
-  var iKg=colIdx(h,['Kilos_Obtenidos']);
-  var iTipo=colIdx(h,['Tipo_Animal']);
-  return rows.slice(1).map(function(r){return{lote:r[iLote]?clean(r[iLote]):'?',date:pDate(r[iFecha]),kg:pNum(r[iKg]),tipo:r[iTipo]?clean(r[iTipo]):'Otro'};}).filter(function(r){return r.date&&r.kg>0;});
+  var iLote=col(h,['ID_Lote']);
+  var iFecha=col(h,['Fecha_Desposte']);
+  var iKg=col(h,['Kilos_Obtenidos']);
+  var iTipo=col(h,['Tipo_Animal']);
+  return rows.slice(1).map(function(r){return{lote:r[iLote]?r[iLote].replace(/"/g,'').trim():'?',date:pDate(r[iFecha]),kg:pNum(r[iKg]),tipo:r[iTipo]?r[iTipo].replace(/"/g,'').trim():'Otro'};}).filter(function(r){return r.date&&r.kg>0;});
+}
+function parseVentas(rows){
+  if(rows.length<2) return [];
+  var h=hdr(rows);
+  var iFecha=col(h,['Fecha_Venta']);
+  var iTotal=col(h,['Total_Venta']);
+  if(iFecha<0||iTotal<0){console.warn('Ventas: cols not found',h.slice(0,8));return[];}
+  return rows.slice(1).map(function(r){return{date:pDate(r[iFecha]),total:pNum(r[iTotal])};}).filter(function(r){return r.date&&r.total>0;});
+}
+function parseProductos(rows){
+  if(rows.length<2) return [];
+  var h=hdr(rows);
+  var iID=col(h,['ID_Producto']);
+  var iN=col(h,['Nombre_Corte']);
+  if(iID<0||iN<0) return [];
+  rows.slice(1).forEach(function(r){
+    var id=r[iID]?r[iID].replace(/"/g,'').trim():'';
+    var nombre=r[iN]?r[iN].replace(/"/g,'').trim():'';
+    if(id&&nombre) catalogo[id]=nombre;
+  });
+  return [];
+}
+function parseCortesDetalle(rows){
+  if(rows.length<2) return [];
+  var h=hdr(rows);
+  console.log('Venta_Detalles cols:',h.slice(0,10).join(', '));
+  // Columnas reales: ID_Recibo_Detalle, ID_Venta, Nombre_Producto_Recibo, Kilos_Recibo, Cantidad_Recibo, Subtotal_Recibo
+  // Fecha viene del join con Ventas via ID_Venta - si no esta, usamos col Fecha si existe
+  var iNombre=col(h,['Nombre_Producto_Recibo','Nombre_Producto','ID_Producto']);
+  var iFecha=col(h,['Fecha_Venta','Fecha_Recibo','Fecha']);
+  var iKilos=col(h,['Kilos_Recibo','Kilos','Kilo']);
+  var iSub=col(h,['Subtotal_Recibo','Subtotal']);
+  return rows.slice(1).map(function(r){
+    var nombre=r[iNombre]?r[iNombre].replace(/"/g,'').trim():'';
+    if(!nombre) return null;
+    // Determinar tipo por nombre del corte (empieza con letra o contiene palabras clave)
+    var tipo='O';
+    var nom=nombre.toUpperCase();
+    // Engorde tiene cortes caracteristicos
+    var engorde=['LOMO PULIDO','MATAMBRE','COSTILLA PARRILLERA','COSTILLA SC','COSTILLA C/CUERO','CARRE S/C','CUELLO C/C','CUERO DE PRIMERA','BONDIOLA','PALETA CON HUESO','PALETA DESHUESADA','PIERNA CON HUESO','PIERNA DESHUESADA'];
+    var marrana=['MAGRA','PANCETA 23','CARRE_M','CUELLO_M','COSTILLA_M','ROSTRO_M','CUERO_M','UBRE'];
+    var esEngorde=engorde.some(function(k){return nom.indexOf(k)>=0;});
+    var esMarrana=marrana.some(function(k){return nom.indexOf(k)>=0;});
+    if(esEngorde) tipo='E';
+    else if(esMarrana) tipo='M';
+    // Si el nombre viene del catalogo cruzado (ej: SKU M1, E3) detectar por catalogo
+    if(tipo==='O'){
+      for(var sku in catalogo){
+        if(catalogo[sku]===nombre){
+          if(sku.startsWith('M')) tipo='M';
+          else if(sku.startsWith('E')) tipo='E';
+          break;
+        }
+      }
+    }
+    var fechaVal=iFecha>=0?pDate(r[iFecha]):null;
+    return{
+      fecha: fechaVal,
+      date:  fechaVal||new Date(),
+      nombre: nombre,
+      tipo:   tipo,
+      kilos:  iKilos>=0?pNum(r[iKilos]):0,
+      subtotal: iSub>=0?pNum(r[iSub]):0
+    };
+  }).filter(function(r){return r&&(r.kilos>0||r.subtotal>0);});
 }
 
-// ---- FILTERS ----
 function populateSelect(selM,selA,data){
   var years=[];
   data.forEach(function(r){if(r.date){var y=r.date.getFullYear();if(years.indexOf(y)<0)years.push(y);}});
@@ -379,8 +398,19 @@ function populateSelect(selM,selA,data){
   if(!years.length) years.push(new Date().getFullYear());
   selA.innerHTML=years.map(function(y){return '<option value="'+y+'">'+y+'</option>';}).join('');
   selM.innerHTML='<option value="all">Todos</option>'+MESES.map(function(m,i){return '<option value="'+i+'">'+m+'</option>';}).join('');
-  if(years.indexOf(2026)>=0) selA.value='2026'; else selA.value=years[0];
-  selM.value='4'; // Mayo por defecto
+  var now=new Date();
+  if(years.indexOf(now.getFullYear())>=0) selA.value=now.getFullYear();
+  selM.value=now.getMonth();
+}
+function filterRecentOnly(data){
+  // Keep only Abril (mes 3) y Mayo (mes 4) 2026 para alivianar carga inicial
+  // Si no hay datos en ese rango, muestra todo lo disponible
+  var filtered=data.filter(function(r){
+    if(!r.date) return false;
+    var y=r.date.getFullYear(); var m=r.date.getMonth();
+    return y===2026 && (m===3||m===4); // Abril=3, Mayo=4
+  });
+  return filtered.length>0 ? filtered : data;
 }
 function populateAllFilters(){
   populateSelect(document.getElementById('c-mes'),document.getElementById('c-anio'),DB.compras);
@@ -388,10 +418,17 @@ function populateAllFilters(){
   populateSelect(document.getElementById('i-mes'),document.getElementById('i-anio'),DB.ingresos);
   populateSelect(document.getElementById('d-mes'),document.getElementById('d-anio'),DB.desposte);
   populateSelect(document.getElementById('v-mes'),document.getElementById('v-anio'),DB.ventas);
-  populateSelect(document.getElementById('vd-mes'),document.getElementById('vd-anio'),DB.detalles);
+  populateSelect(document.getElementById('vd-mes'),document.getElementById('vd-anio'),DB.cortes);
+  // Pre-seleccionar Mayo 2026 en todos los selectores
+  ['c','g','i','d','v','vd'].forEach(function(p){
+    var sm=document.getElementById(p+'-mes');
+    var sa=document.getElementById(p+'-anio');
+    if(sa) sa.value='2026';
+    if(sm) sm.value='4'; // Mayo = indice 4
+  });
   renderCompras();renderGuias();renderIngresos();renderDesposte();renderVentas();renderCortes();
 }
-function filterPeriod(data,mesId,anioId){
+function filterByPeriod(data,mesId,anioId){
   var yr=parseInt(document.getElementById(anioId).value);
   var mon=document.getElementById(mesId).value;
   return data.filter(function(r){
@@ -402,7 +439,6 @@ function filterPeriod(data,mesId,anioId){
   });
 }
 
-// ---- CHART UTILS ----
 function baseOpts(){
   return{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false}},
@@ -411,46 +447,43 @@ function baseOpts(){
       y:{ticks:{color:'#888',font:{size:10},callback:function(v){return v.toLocaleString('es-BO');}},grid:{color:'rgba(0,0,0,0.05)'}}
     }};
 }
-function baseOptsH(){var o=baseOpts();o.indexAxis='y';o.scales.x.ticks.maxRotation=0;return o;}
-function mkBar(id,labels,data,color){
-  if(charts[id]) charts[id].destroy();
-  charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels:labels,datasets:[{data:data,backgroundColor:color,borderRadius:3}]},options:baseOpts()});
+function baseOptsH(){
+  var o=baseOpts();
+  o.indexAxis='y';
+  o.scales.x.ticks.maxRotation=0;
+  o.scales.y.ticks.font={size:10};
+  return o;
 }
-function mkBarH(id,labels,data,colors){
+function mkChart(id,labels,data,color,type){
+  type=type||'bar';
+  if(charts[id]) charts[id].destroy();
+  var ds={data:data,backgroundColor:color,borderRadius:3,borderColor:color};
+  if(type==='line'){ds.fill=false;ds.tension=.3;ds.pointRadius=3;}
+  charts[id]=new Chart(document.getElementById(id),{type:type,data:{labels:labels,datasets:[ds]},options:baseOpts()});
+}
+function mkChartH(id,labels,data,colors){
   if(charts[id]) charts[id].destroy();
   charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels:labels,datasets:[{data:data,backgroundColor:colors||'#e24b4a',borderRadius:3}]},options:baseOptsH()});
 }
-function mkStacked(id,labels,datasets){
-  if(charts[id]) charts[id].destroy();
-  var o=baseOpts();o.plugins={legend:{display:datasets.length>1,position:'top',labels:{font:{size:10},boxWidth:8,padding:6}}};
-  o.scales.x={stacked:true,ticks:{color:'#888',font:{size:10},autoSkip:true,maxRotation:45},grid:{color:'rgba(0,0,0,0.05)'}};
-  o.scales.y={stacked:true,ticks:{color:'#888',font:{size:10},callback:function(v){return v.toLocaleString('es-BO');}},grid:{color:'rgba(0,0,0,0.05)'}};
-  charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels:labels,datasets:datasets},options:o});
-}
-function show(wrapId){document.getElementById(wrapId).style.display='block';}
-function noData(wrapId,ndId){document.getElementById(wrapId).style.display='none';if(ndId)document.getElementById(ndId).style.display='block';}
-function hideNoData(ndId){if(ndId)document.getElementById(ndId).style.display='none';}
 
-// ---- RENDER COMPRAS ----
 function renderCompras(){
-  var data=filterPeriod(DB.compras,'c-mes','c-anio');
+  var data=filterByPeriod(DB.compras,'c-mes','c-anio');
   document.getElementById('c-load').style.display='none';
-  show('c-w1');
+  document.getElementById('c-w1').style.display='block';
   var byDay={};
   data.forEach(function(r){var k=fmtDate(r.date);if(!byDay[k])byDay[k]={anim:0,peso:0,costo:0};byDay[k].anim+=r.anim;byDay[k].peso+=r.peso;byDay[k].costo+=r.costo;});
-  var labels=sortDayLabels(Object.keys(byDay));
+  var labels=sortLabels(Object.keys(byDay));
   var tot={anim:0,peso:0,costo:0};
   data.forEach(function(r){tot.anim+=r.anim;tot.peso+=r.peso;tot.costo+=r.costo;});
   document.getElementById('c-k1').textContent=data.length;
   document.getElementById('c-k2').textContent=fmtN(tot.anim);
   document.getElementById('c-k3').textContent=fmtN(tot.peso);
   document.getElementById('c-k4').textContent=fmtN(tot.costo);
-  mkBar('c-ch1',labels,labels.map(function(l){return byDay[l].anim;}),'#e24b4a');
-  mkBar('c-ch2',labels,labels.map(function(l){return Math.round(byDay[l].peso);}),'#378add');
-  mkBar('c-ch3',labels,labels.map(function(l){return Math.round(byDay[l].costo);}),'#1d9e75');
+  mkChart('c-ch1',labels,labels.map(function(l){return byDay[l].anim;}),'#e24b4a');
+  mkChart('c-ch2',labels,labels.map(function(l){return Math.round(byDay[l].peso);}),'#378add');
+  mkChart('c-ch3',labels,labels.map(function(l){return Math.round(byDay[l].costo);}),'#1d9e75');
 }
 
-// ---- RENDER GUIAS ----
 function renderGuias(){
   var yr=parseInt(document.getElementById('g-anio').value);
   var mon=document.getElementById('g-mes').value;
@@ -462,134 +495,149 @@ function renderGuias(){
     return true;
   });
   document.getElementById('g-load').style.display='none';
-  if(!data.length){noData('g-w1','g-nodata');['g-k1','g-k2','g-k3'].forEach(function(id){document.getElementById(id).textContent='0';});return;}
-  hideNoData('g-nodata');show('g-w1');
-  var lotes=[];data.forEach(function(r){if(lotes.indexOf(r.lote)<0)lotes.push(r.lote);});lotes.sort(function(a,b){return parseInt(a)-parseInt(b);});
-  var days=[];data.forEach(function(r){var d=guiaSeg==='emision'?r.fechaEmision:r.fechaCarga;var k=fmtDate(d);if(days.indexOf(k)<0)days.push(k);});
-  var labels=sortDayLabels(days);
+  var nd=document.getElementById('g-nodata'), wrap=document.getElementById('g-w1');
+  if(!data.length){nd.style.display='block';wrap.style.display='none';['g-k1','g-k2','g-k3'].forEach(function(id){document.getElementById(id).textContent='0';});return;}
+  nd.style.display='none';wrap.style.display='block';
+  var lotes=[];
+  data.forEach(function(r){if(lotes.indexOf(r.lote)<0)lotes.push(r.lote);});
+  lotes.sort(function(a,b){return parseInt(a)-parseInt(b);});
+  var days=[];
+  data.forEach(function(r){var d=guiaSeg==='emision'?r.fechaEmision:r.fechaCarga;var k=fmtDate(d);if(days.indexOf(k)<0)days.push(k);});
+  var labels=sortLabels(days);
   var colors=['#ba7517','#e24b4a','#378add','#1d9e75','#534ab7','#0f6e56','#993556'];
   var datasets=lotes.slice(0,7).map(function(lote,i){
-    var byDay={};data.filter(function(r){return r.lote===lote;}).forEach(function(r){var d=guiaSeg==='emision'?r.fechaEmision:r.fechaCarga;var k=fmtDate(d);if(!byDay[k])byDay[k]=0;byDay[k]+=r.peso;});
+    var byDay={};
+    data.filter(function(r){return r.lote===lote;}).forEach(function(r){var d=guiaSeg==='emision'?r.fechaEmision:r.fechaCarga;var k=fmtDate(d);if(!byDay[k])byDay[k]=0;byDay[k]+=r.peso;});
     return{label:'Lote '+lote,data:labels.map(function(l){return Math.round(byDay[l]||0);}),backgroundColor:colors[i%colors.length],borderRadius:2,stack:'s'};
   });
-  var totKg=0;data.forEach(function(r){totKg+=r.peso;});
+  var totKg=0; data.forEach(function(r){totKg+=r.peso;});
   document.getElementById('g-k1').textContent=data.length;
   document.getElementById('g-k2').textContent=lotes.length;
   document.getElementById('g-k3').textContent=fmtN(totKg);
-  mkStacked('g-ch1',labels,datasets);
+  if(charts['g-ch1']) charts['g-ch1'].destroy();
+  charts['g-ch1']=new Chart(document.getElementById('g-ch1'),{type:'bar',data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:lotes.length>1,position:'top',labels:{font:{size:10},boxWidth:8,padding:6}}},scales:{x:{stacked:true,ticks:{color:'#888',font:{size:10},autoSkip:true,maxRotation:45},grid:{color:'rgba(0,0,0,0.05)'}},y:{stacked:true,ticks:{color:'#888',font:{size:10},callback:function(v){return v.toLocaleString('es-BO');}},grid:{color:'rgba(0,0,0,0.05)'}}}}});
 }
 
-// ---- RENDER INGRESOS ----
 function renderIngresos(){
-  var data=filterPeriod(DB.ingresos,'i-mes','i-anio');
+  var data=filterByPeriod(DB.ingresos,'i-mes','i-anio');
   document.getElementById('i-load').style.display='none';
-  if(!data.length){noData('i-w1','i-nodata');['i-k1','i-k2','i-k3'].forEach(function(id){document.getElementById(id).textContent='0';});return;}
-  hideNoData('i-nodata');show('i-w1');
-  var byDay={};data.forEach(function(r){var k=fmtDate(r.date);if(!byDay[k])byDay[k]={peso:0,cnt:0};byDay[k].peso+=r.peso;byDay[k].cnt++;});
-  var labels=sortDayLabels(Object.keys(byDay));
-  var totPeso=0,totCnt=0,lotes=[];
-  data.forEach(function(r){totPeso+=r.peso;totCnt++;if(lotes.indexOf(r.lote)<0)lotes.push(r.lote);});
+  var nd=document.getElementById('i-nodata'), w1=document.getElementById('i-w1');
+  if(!data.length){nd.style.display='block';w1.style.display='none';['i-k1','i-k2','i-k3'].forEach(function(id){document.getElementById(id).textContent='0';});return;}
+  nd.style.display='none';w1.style.display='block';
+  var byDay={};
+  data.forEach(function(r){var k=fmtDate(r.date);if(!byDay[k])byDay[k]={peso:0,cnt:0};byDay[k].peso+=r.peso;byDay[k].cnt++;});
+  var labels=sortLabels(Object.keys(byDay));
+  var totPeso=0,totCnt=0; data.forEach(function(r){totPeso+=r.peso;totCnt++;});
+  var lotes=[]; data.forEach(function(r){if(lotes.indexOf(r.lote)<0)lotes.push(r.lote);});
   document.getElementById('i-k1').textContent=totCnt;
   document.getElementById('i-k2').textContent=lotes.length;
   document.getElementById('i-k3').textContent=fmtN(totPeso);
-  mkBar('i-ch1',labels,labels.map(function(l){return Math.round(byDay[l].peso);}),'#534ab7');
-  mkBar('i-ch2',labels,labels.map(function(l){return byDay[l].cnt;}),'#afa9ec');
+  mkChart('i-ch1',labels,labels.map(function(l){return Math.round(byDay[l].peso);}),'#534ab7');
+  mkChart('i-ch2',labels,labels.map(function(l){return byDay[l].cnt;}),'#afa9ec');
 }
 
-// ---- RENDER DESPOSTE ----
 function renderDesposte(){
-  var data=filterPeriod(DB.desposte,'d-mes','d-anio');
+  var data=filterByPeriod(DB.desposte,'d-mes','d-anio');
   document.getElementById('d-load').style.display='none';
-  if(!data.length){noData('d-w1','d-nodata');['d-k1','d-k2','d-k3'].forEach(function(id){document.getElementById(id).textContent='0';});return;}
-  hideNoData('d-nodata');show('d-w1');
-  var tipos=[];data.forEach(function(r){if(tipos.indexOf(r.tipo)<0)tipos.push(r.tipo);});tipos.sort();
-  var days=[];data.forEach(function(r){var k=fmtDate(r.date);if(days.indexOf(k)<0)days.push(k);});
-  var labels=sortDayLabels(days);
+  var nd=document.getElementById('d-nodata'), wrap=document.getElementById('d-w1');
+  if(!data.length){nd.style.display='block';wrap.style.display='none';['d-k1','d-k2','d-k3'].forEach(function(id){document.getElementById(id).textContent='0';});return;}
+  nd.style.display='none';wrap.style.display='block';
+  var tipos=[]; data.forEach(function(r){if(tipos.indexOf(r.tipo)<0)tipos.push(r.tipo);});
+  tipos.sort();
+  var days=[]; data.forEach(function(r){var k=fmtDate(r.date);if(days.indexOf(k)<0)days.push(k);});
+  var labels=sortLabels(days);
   var clrs={Marrana:'#e24b4a',Engorde:'#378add',Verraco:'#ba7517',Otro:'#888780'};
   var datasets=tipos.map(function(tipo){
-    var byDay={};data.filter(function(r){return r.tipo===tipo;}).forEach(function(r){var k=fmtDate(r.date);if(!byDay[k])byDay[k]=0;byDay[k]+=r.kg;});
+    var byDay={};
+    data.filter(function(r){return r.tipo===tipo;}).forEach(function(r){var k=fmtDate(r.date);if(!byDay[k])byDay[k]=0;byDay[k]+=r.kg;});
     return{label:tipo,data:labels.map(function(l){return Math.round(byDay[l]||0);}),backgroundColor:clrs[tipo]||'#1d9e75',borderRadius:2,stack:'s'};
   });
-  var totKg=0,lotes=[];data.forEach(function(r){totKg+=r.kg;if(lotes.indexOf(r.lote)<0)lotes.push(r.lote);});
+  var totKg=0,lotes=[]; data.forEach(function(r){totKg+=r.kg;if(lotes.indexOf(r.lote)<0)lotes.push(r.lote);});
   document.getElementById('d-k1').textContent=data.length;
   document.getElementById('d-k2').textContent=lotes.length;
   document.getElementById('d-k3').textContent=fmtN(totKg);
-  mkStacked('d-ch1',labels,datasets);
+  if(charts['d-ch1']) charts['d-ch1'].destroy();
+  charts['d-ch1']=new Chart(document.getElementById('d-ch1'),{type:'bar',data:{labels:labels,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:tipos.length>1,position:'top',labels:{font:{size:10},boxWidth:8,padding:6}}},scales:{x:{stacked:true,ticks:{color:'#888',font:{size:10},autoSkip:true,maxRotation:45},grid:{color:'rgba(0,0,0,0.05)'}},y:{stacked:true,ticks:{color:'#888',font:{size:10},callback:function(v){return v.toLocaleString('es-BO');}},grid:{color:'rgba(0,0,0,0.05)'}}}}});
 }
 
-// ---- RENDER VENTAS ----
 function renderVentas(){
   document.getElementById('v-load').style.display='none';
+  var nd=document.getElementById('v-nodata'), w1=document.getElementById('v-w1');
   if(ventaVista==='dia'){
-    var data=filterPeriod(DB.ventas,'v-mes','v-anio');
-    if(!data.length){noData('v-w1','v-nodata');['v-k1','v-k2','v-k3','v-k4'].forEach(function(id){document.getElementById(id).textContent='-';});return;}
-    hideNoData('v-nodata');show('v-w1');
-    var byDay={};data.forEach(function(r){var k=fmtDate(r.date);if(!byDay[k])byDay[k]={total:0,cnt:0};byDay[k].total+=r.total;byDay[k].cnt++;});
-    var labels=sortDayLabels(Object.keys(byDay));
+    var data=filterByPeriod(DB.ventas,'v-mes','v-anio');
+    if(!data.length){nd.style.display='block';w1.style.display='none';['v-k1','v-k2','v-k3','v-k4'].forEach(function(id){document.getElementById(id).textContent='—';});return;}
+    nd.style.display='none';w1.style.display='block';
+    var byDay={};
+    data.forEach(function(r){var k=fmtDate(r.date);if(!byDay[k])byDay[k]={total:0,cnt:0};byDay[k].total+=r.total;byDay[k].cnt++;});
+    var labels=sortLabels(Object.keys(byDay));
     var totals=labels.map(function(l){return Math.round(byDay[l].total);});
-    var grand=0;data.forEach(function(r){grand+=r.total;});
-    var maxV=totals.length?Math.max.apply(null,totals):0; var maxIdx=totals.indexOf(maxV);
+    var grand=0; data.forEach(function(r){grand+=r.total;});
+    var maxVal=Math.max.apply(null,totals); var maxIdx=totals.indexOf(maxVal);
     document.getElementById('v-k1').textContent=fmtN(grand);
     document.getElementById('v-k2').textContent=data.length;
-    document.getElementById('v-k3').textContent=data.length?fmtN(grand/data.length):'-';
-    document.getElementById('v-k4').textContent=maxIdx>=0?labels[maxIdx]:'-';
-    mkBar('v-ch1',labels,totals,'#e24b4a');
-    mkBar('v-ch2',labels,labels.map(function(l){return byDay[l].cnt;}),'#378add');
+    document.getElementById('v-k3').textContent=data.length?fmtN(grand/data.length):'—';
+    document.getElementById('v-k4').textContent=maxIdx>=0?labels[maxIdx]:'—';
+    mkChart('v-ch1',labels,totals,'#e24b4a');
+    mkChart('v-ch2',labels,labels.map(function(l){return byDay[l].cnt;}),'#378add');
   } else {
     var yr=parseInt(document.getElementById('v-anio').value);
     var data2=DB.ventas.filter(function(r){return r.date&&r.date.getFullYear()===yr;});
-    if(!data2.length){noData('v-w1','v-nodata');['v-k1','v-k2','v-k3','v-k4'].forEach(function(id){document.getElementById(id).textContent='-';});return;}
-    hideNoData('v-nodata');show('v-w1');
-    var byMes={};MESES.forEach(function(_,i){byMes[i]=0;});
+    if(!data2.length){nd.style.display='block';w1.style.display='none';['v-k1','v-k2','v-k3','v-k4'].forEach(function(id){document.getElementById(id).textContent='—';});return;}
+    nd.style.display='none';w1.style.display='block';
+    var byMes={}; MESES.forEach(function(_,i){byMes[i]=0;});
     data2.forEach(function(r){byMes[r.date.getMonth()]+=r.total;});
     var totals2=MESES.map(function(_,i){return Math.round(byMes[i]);});
-    var grand2=0;data2.forEach(function(r){grand2+=r.total;});
+    var grand2=0; data2.forEach(function(r){grand2+=r.total;});
     var nonZero=totals2.filter(function(t){return t>0;}); var maxM=nonZero.length?Math.max.apply(null,nonZero):0;
     var maxIdx2=totals2.indexOf(maxM);
     document.getElementById('v-k1').textContent=fmtN(grand2);
     document.getElementById('v-k2').textContent=data2.length;
-    document.getElementById('v-k3').textContent=data2.length?fmtN(grand2/data2.length):'-';
-    document.getElementById('v-k4').textContent=maxIdx2>=0?MESES[maxIdx2]:'-';
-    mkBar('v-ch1',MESES,totals2,'#e24b4a');
+    document.getElementById('v-k3').textContent=data2.length?fmtN(grand2/data2.length):'—';
+    document.getElementById('v-k4').textContent=maxIdx2>=0?MESES[maxIdx2]:'—';
+    mkChart('v-ch1',MESES,totals2,'#e24b4a');
   }
 }
 
-// ---- RENDER CORTES ----
 function renderCortes(){
   document.getElementById('vd-load').style.display='none';
-  var data=filterPeriod(DB.detalles,'vd-mes','vd-anio');
+  var data=filterByPeriod(DB.cortes,'vd-mes','vd-anio');
   if(corteAnimal!=='all') data=data.filter(function(r){return r.tipo===corteAnimal;});
+  var nd=document.getElementById('vd-nodata1');
+  var w1=document.getElementById('vd-w1'), w2=document.getElementById('vd-w2');
+  var tabla=document.getElementById('vd-tabla');
   if(!data.length){
-    noData('vd-w1','vd-nodata1');noData('vd-w2',null);
-    ['vd-k1','vd-k2','vd-k3','vd-k4'].forEach(function(id){document.getElementById(id).textContent='-';});
-    document.getElementById('vd-tabla').innerHTML='<div class="loading-msg">Sin datos para el periodo seleccionado</div>';
+    nd.style.display='block';w1.style.display='none';w2.style.display='none';
+    ['vd-k1','vd-k2','vd-k3','vd-k4'].forEach(function(id){document.getElementById(id).textContent='—';});
+    tabla.innerHTML='<div class="loading-msg">Sin datos para el periodo</div>';
     return;
   }
-  hideNoData('vd-nodata1');show('vd-w1');show('vd-w2');
+  nd.style.display='none';w1.style.display='block';w2.style.display='block';
   var byCorte={};
   data.forEach(function(r){
-    var k=r.nombre; if(!k) k='SIN NOMBRE';
+    var k=r.nombre||r.idProd;
     if(!byCorte[k]) byCorte[k]={nombre:k,tipo:r.tipo,kilos:0,subtotal:0};
-    byCorte[k].kilos+=r.kilos; byCorte[k].subtotal+=r.subtotal;
+    byCorte[k].kilos+=r.kilos;
+    byCorte[k].subtotal+=r.subtotal;
   });
   var cortes=Object.values(byCorte).sort(function(a,b){return b.kilos-a.kilos;});
   var topKg=cortes.slice(0,15);
   var topSub=cortes.slice().sort(function(a,b){return b.subtotal-a.subtotal;}).slice(0,15);
-  var totKg=0,totSub=0;data.forEach(function(r){totKg+=r.kilos;totSub+=r.subtotal;});
+  var totKg=0,totSub=0;
+  data.forEach(function(r){totKg+=r.kilos;totSub+=r.subtotal;});
   document.getElementById('vd-k1').textContent=fmtN(totSub);
   document.getElementById('vd-k2').textContent=fmtN(totKg);
-  document.getElementById('vd-k3').textContent=totKg>0?fmtDec(totSub/totKg,1):'-';
+  document.getElementById('vd-k3').textContent=totKg>0?fmtDec(totSub/totKg,1):'—';
   document.getElementById('vd-k4').textContent=cortes.length;
-  var clrA=function(t){return t==='M'?'#e24b4a':t==='E'?'#378add':t==='V'?'#ba7517':'#888780';};
-  mkBarH('vd-ch1',topKg.map(function(c){return c.nombre;}),topKg.map(function(c){return parseFloat(c.kilos.toFixed(1));}),topKg.map(function(c){return clrA(c.tipo);}));
-  mkBarH('vd-ch2',topSub.map(function(c){return c.nombre;}),topSub.map(function(c){return Math.round(c.subtotal);}),topSub.map(function(c){return clrA(c.tipo);}));
-  var tipoBadge=function(t){var lbl=t==='M'?'Marrana':t==='E'?'Engorde':t==='V'?'Verraco':'Otro';return '<span class="badge badge-'+t+'">'+lbl+'</span>';};
+  var clrA=function(t){return t==='M'?'#e24b4a':t==='E'?'#378add':'#ba7517';};
+  mkChartH('vd-ch1',topKg.map(function(c){return c.nombre;}),topKg.map(function(c){return parseFloat(c.kilos.toFixed(1));}),topKg.map(function(c){return clrA(c.tipo);}));
+  mkChartH('vd-ch2',topSub.map(function(c){return c.nombre;}),topSub.map(function(c){return Math.round(c.subtotal);}),topSub.map(function(c){return clrA(c.tipo);}));
+  var tipoBadge=function(t){return t==='M'?'<span class="badge badge-m">Marrana</span>':t==='E'?'<span class="badge badge-e">Engorde</span>':'<span class="badge badge-o">Otro</span>';};
   var rowsHtml='';
   cortes.forEach(function(c){
     var avg=c.kilos>0?(c.subtotal/c.kilos):0;
-    rowsHtml+='<tr><td>'+c.nombre+'</td><td>'+tipoBadge(c.tipo)+'</td><td class="num">'+fmtDec(c.kilos,1)+'</td><td class="num">'+fmtN(c.subtotal)+'</td><td class="num">'+(avg>0?fmtDec(avg,2):'-')+' <span class="precio-avg">Bs./kg</span></td></tr>';
+    rowsHtml+='<tr><td>'+c.nombre+'</td><td>'+tipoBadge(c.tipo)+'</td><td class="num">'+fmtDec(c.kilos,1)+'</td><td class="num">'+fmtN(c.subtotal)+'</td><td class="num">'+(avg>0?fmtDec(avg,2):'—')+' <span class="precio-avg">Bs./kg</span></td></tr>';
   });
-  document.getElementById('vd-tabla').innerHTML='<table class="cortes"><thead><tr><th>Corte</th><th>Tipo</th><th class="num">Kg vendidos</th><th class="num">Subtotal (Bs.)</th><th class="num">Precio prom.</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>';
+  tabla.innerHTML='<table class="cortes"><thead><tr><th>Corte</th><th>Tipo</th><th class="num">Kg vendidos</th><th class="num">Subtotal (Bs.)</th><th class="num">Precio prom.</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>';
 }
 
 </script>
